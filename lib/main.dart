@@ -1,7 +1,21 @@
+// lib/main.dart
+
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'screens/business_setup_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive with the app's document directory
+  final appDocDir = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter(appDocDir.path);
+
+  // Open the boxes (like tables) we need
+  await Hive.openBox('businesses');
+  await Hive.openBox('settings');
+
   runApp(const MyApp());
 }
 
