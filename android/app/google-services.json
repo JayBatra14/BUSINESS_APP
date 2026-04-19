@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "381769684680",
+    "firebase_url": "https://business-app-f6f9b-default-rtdb.firebaseio.com",
+    "project_id": "business-app-f6f9b",
+    "storage_bucket": "business-app-f6f9b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381769684680:android:d600d39ccc9c9f060737fd",
+        "android_client_info": {
+          "package_name": "com.example.business_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChhU6Psic24uhEeBtQpUOiZ5idJ0br0Tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
