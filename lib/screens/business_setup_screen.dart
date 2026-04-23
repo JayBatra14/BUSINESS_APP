@@ -198,7 +198,7 @@ Future<void> _saveBusinessDetails() async {
 
               // Business type dropdown
               DropdownButtonFormField<String>(
-                value: _selectedBusinessType,
+                initialValue: _selectedBusinessType,
                 decoration: InputDecoration(
                   labelText: 'Business Type',
                   prefixIcon:
