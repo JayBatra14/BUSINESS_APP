@@ -31,7 +31,7 @@ class PdfInvoiceService {
           pw.SizedBox(height: 30),
           _buildTable(order, primaryColor),
           pw.SizedBox(height: 20),
-          _buildTotals(order, primaryColor),
+          _buildTotals(order, primaryColor, business),
           pw.SizedBox(height: 40),
           _buildFooter(order),
         ],
@@ -147,12 +147,33 @@ class PdfInvoiceService {
     );
   }
 
-  static pw.Widget _buildTotals(OrderModel order, PdfColor primaryColor) {
+  static pw.Widget _buildTotals(OrderModel order, PdfColor primaryColor, BusinessModel business) {
     return pw.Container(
       alignment: pw.Alignment.centerRight,
       child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Spacer(flex: 6),
+          pw.Expanded(
+            flex: 6,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text('Amount in Words:', style: const pw.TextStyle(color: PdfColors.grey600, fontSize: 10)),
+                pw.Text(_numberToWords(order.grandTotal.toInt()), style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
+                if (business.upiId != null && business.upiId!.isNotEmpty) ...[
+                  pw.SizedBox(height: 16),
+                  pw.Text('Scan to Pay via UPI', style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                  pw.SizedBox(height: 4),
+                  pw.BarcodeWidget(
+                    data: 'upi://pay?pa=${business.upiId}&pn=${Uri.encodeComponent(business.businessName)}&am=${order.grandTotal.toStringAsFixed(2)}&cu=INR',
+                    barcode: pw.Barcode.qrCode(),
+                    width: 80,
+                    height: 80,
+                  ),
+                ],
+              ],
+            ),
+          ),
           pw.Expanded(
             flex: 4,
             child: pw.Column(
@@ -207,5 +228,25 @@ class PdfInvoiceService {
         ),
       ],
     );
+  }
+
+  static String _numberToWords(int number) {
+    if (number == 0) return 'Zero Rupees Only';
+    final units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    final tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    
+    String convertUnderHundred(int n) {
+      if (n < 20) return units[n];
+      return '${tens[n ~/ 10]} ${units[n % 10]}'.trim();
+    }
+    
+    String convert(int n) {
+      if (n < 100) return convertUnderHundred(n);
+      if (n < 1000) return '${units[n ~/ 100]} Hundred ${convertUnderHundred(n % 100)}'.trim();
+      if (n < 100000) return '${convertUnderHundred(n ~/ 1000)} Thousand ${convert(n % 1000)}'.trim();
+      if (n < 10000000) return '${convertUnderHundred(n ~/ 100000)} Lakh ${convert(n % 100000)}'.trim();
+      return '${convertUnderHundred(n ~/ 10000000)} Crore ${convert(n % 10000000)}'.trim();
+    }
+    return '${convert(number)} Rupees Only';
   }
 }

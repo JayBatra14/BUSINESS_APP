@@ -15,6 +15,7 @@ class BusinessModel {
   final String   city;
   final String   state;
   final String   pincode;
+  final String?  upiId;
   final DateTime createdAt;
 
   BusinessModel({
@@ -32,6 +33,7 @@ class BusinessModel {
     required this.city,
     required this.state,
     required this.pincode,
+    this.upiId,
     required this.createdAt,
   });
 
@@ -50,6 +52,7 @@ class BusinessModel {
       'city':           city,
       'state':          state,
       'pincode':        pincode,
+      'upiId':          upiId ?? '',
       'createdAt':      createdAt.toIso8601String(),
     };
   }
@@ -70,6 +73,7 @@ class BusinessModel {
       city:           map['city']           ?? '',
       state:          map['state']          ?? '',
       pincode:        map['pincode']        ?? '',
+      upiId:          map['upiId'],
       createdAt: DateTime.parse(
           map['createdAt'] ?? DateTime.now().toIso8601String()),
     );

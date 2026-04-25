@@ -32,6 +32,7 @@ class _BusinessSetupScreenState extends State<BusinessSetupScreen> {
   final _cityController         = TextEditingController();
   final _stateController        = TextEditingController();
   final _pincodeController      = TextEditingController();
+  final _upiIdController        = TextEditingController();
 
   String _selectedBusinessType = 'Shop';
   final List<String> _businessTypes = [
@@ -58,6 +59,7 @@ class _BusinessSetupScreenState extends State<BusinessSetupScreen> {
       _cityController.text = b.city ?? '';
       _stateController.text = b.state ?? '';
       _pincodeController.text = b.pincode ?? '';
+      _upiIdController.text = b.upiId ?? '';
       _selectedBusinessType = b.businessType;
       if (b.logoPath != null && b.logoPath!.isNotEmpty && File(b.logoPath!).existsSync()) {
         _selectedLogoFile = File(b.logoPath!);
@@ -77,6 +79,7 @@ class _BusinessSetupScreenState extends State<BusinessSetupScreen> {
     _cityController.dispose();
     _stateController.dispose();
     _pincodeController.dispose();
+    _upiIdController.dispose();
     super.dispose();
   }
 
@@ -115,6 +118,7 @@ Future<void> _saveBusinessDetails() async {
     city:      _cityController.text.trim(),
     state:     _stateController.text.trim(),
     pincode:   _pincodeController.text.trim(),
+    upiId:     _upiIdController.text.trim().isEmpty ? null : _upiIdController.text.trim(),
     createdAt: DateTime.now(),
   );
 
@@ -137,6 +141,7 @@ Future<void> _saveBusinessDetails() async {
         city: business.city,
         state: business.state,
         pincode: business.pincode,
+        upiId: business.upiId,
         logoPath: newLogoPath,
         createdAt: widget.existingBusiness!.createdAt,
       );
@@ -276,6 +281,14 @@ Future<void> _saveBusinessDetails() async {
                 label: 'GST Number (optional)',
                 hint: 'e.g. 07AAAPL1234C1ZV',
                 icon: Icons.receipt_long,
+              ),
+              const SizedBox(height: 12),
+              
+              _buildTextField(
+                controller: _upiIdController,
+                label: 'UPI ID for Payments (optional)',
+                hint: 'e.g. sharma@ybl',
+                icon: Icons.qr_code,
               ),
 
               const SizedBox(height: 24),
