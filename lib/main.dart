@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'screens/business_setup_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'services/local_db_service.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,10 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Business App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: Colors.blue,
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
       home: hasBusiness
           ? DashboardScreen(businessId: activeId)
           : const BusinessSetupScreen(),

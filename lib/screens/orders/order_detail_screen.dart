@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import '../../models/order_model.dart';
 import '../../services/order_service.dart';
+import 'invoice_preview_screen.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   final String orderId;
@@ -37,6 +38,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         title: Text(o.orderNumber),
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => InvoicePreviewScreen(order: o),
+              ));
+            },
+          ),
           PopupMenuButton<String>(
             onSelected: (v) async {
               if (v == 'delete') {

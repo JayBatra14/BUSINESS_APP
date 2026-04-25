@@ -8,6 +8,7 @@ import '../../models/address_model.dart';
 import '../../services/order_service.dart';
 import '../../services/customer_service.dart';
 import '../../services/product_service.dart';
+import '../../widgets/barcode_scanner_screen.dart';
 
 class CreateOrderScreen extends StatefulWidget {
   const CreateOrderScreen({super.key});
@@ -310,6 +311,26 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           Row(children: [
             _sec('Items'),
             const Spacer(),
+            IconButton(
+              onPressed: () async {
+                final code = await Navigator.push<String>(context, MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()));
+                if (code != null) {
+                  final products = _prodSvc.getAllProducts();
+                  try {
+                    final matched = products.firstWhere((p) => p.barcode == code);
+                    setState(() => _cart.add(_CartItem(product: matched)));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added ${matched.name}'), backgroundColor: Colors.green));
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Product not found for this barcode'), backgroundColor: Colors.red));
+                    }
+                  }
+                }
+              },
+              icon: const Icon(Icons.qr_code_scanner, color: Colors.blue),
+            ),
             TextButton.icon(
               onPressed: _addProduct,
               icon: const Icon(Icons.add, size: 18), label: const Text('Add'),

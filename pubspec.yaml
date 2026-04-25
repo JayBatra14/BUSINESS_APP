@@ -52,6 +52,8 @@ dependencies:
   # PDF generation for invoices
   pdf: ^3.11.2
   printing: ^5.13.5
+  google_fonts: ^8.0.2
+  mobile_scanner: ^7.2.0
 
 dev_dependencies:
   flutter_test:

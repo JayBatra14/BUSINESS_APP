@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import '../../services/local_db_service.dart';
 import '../expenses/expense_list_screen.dart';
+import '../business_setup_screen.dart';
 import 'ledger_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -56,8 +57,9 @@ class MoreScreen extends StatelessWidget {
           const SizedBox(height: 12),
 
           _menuItem(context, 'Edit Business Profile', Icons.edit, Colors.blue, () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Edit profile — coming in next update')));
+            Navigator.push(context, MaterialPageRoute(
+              builder: (_) => BusinessSetupScreen(existingBusiness: biz),
+            ));
           }),
           _menuItem(context, 'Backup Data', Icons.backup, Colors.teal, () {
             ScaffoldMessenger.of(context).showSnackBar(

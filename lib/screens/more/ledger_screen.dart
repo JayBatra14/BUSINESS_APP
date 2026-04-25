@@ -11,62 +11,45 @@ class LedgerScreen extends StatefulWidget {
   State<LedgerScreen> createState() => _LedgerScreenState();
 }
 
-class _LedgerScreenState extends State<LedgerScreen> with SingleTickerProviderStateMixin {
+class _LedgerScreenState extends State<LedgerScreen> {
   final _custSvc = CustomerService();
-  late TabController _tabCtrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabCtrl = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabCtrl.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final allCustomers = _custSvc.getAllCustomers();
-    final withBalance = allCustomers.where((c) => c.balance != 0).toList();
-    final youWillGet = withBalance.where((c) => c.balance > 0).toList();
-    final youWillGive = withBalance.where((c) => c.balance < 0).toList();
-    final totalReceivable = youWillGet.fold(0.0, (s, c) => s + c.balance);
-    final totalPayable = youWillGive.fold(0.0, (s, c) => s + c.balance.abs());
+    final withBalance = allCustomers.where((c) => c.balance != 0).toList()
+      ..sort((a, b) => b.balance.abs().compareTo(a.balance.abs())); // Sort by largest balance
+    
+    final totalReceivable = withBalance.where((c) => c.balance > 0).fold(0.0, (s, c) => s + c.balance);
+    final totalPayable = withBalance.where((c) => c.balance < 0).fold(0.0, (s, c) => s + c.balance.abs());
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('Ledger'),
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
-        bottom: TabBar(
-          controller: _tabCtrl,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          tabs: const [
-            Tab(text: 'You Will Get'),
-            Tab(text: 'You Will Give'),
-          ],
-        ),
       ),
       body: Column(children: [
         // Summary cards
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           child: Row(children: [
             Expanded(child: _summaryCard('You Will Get', totalReceivable, Colors.green)),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(child: _summaryCard('You Will Give', totalPayable, Colors.red)),
           ]),
         ),
+        
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text('Outstanding Balances', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
+          ),
+        ),
+        
         Expanded(
-          child: TabBarView(controller: _tabCtrl, children: [
-            _buildList(youWillGet, Colors.green),
-            _buildList(youWillGive, Colors.red),
-          ]),
+          child: _buildList(withBalance),
         ),
       ]),
     );
@@ -77,45 +60,61 @@ class _LedgerScreenState extends State<LedgerScreen> with SingleTickerProviderSt
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 4),
+        Text(title, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 8),
         Text('₹${amount.toStringAsFixed(0)}',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color)),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
       ]),
     );
   }
 
-  Widget _buildList(List<CustomerModel> customers, Color color) {
+  Widget _buildList(List<CustomerModel> customers) {
     if (customers.isEmpty) {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(Icons.check_circle_outline, size: 60, color: Colors.grey.shade300),
         const SizedBox(height: 12),
-        Text('All clear!', style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
+        Text('All accounts are clear!', style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
       ]));
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: customers.length,
       itemBuilder: (_, i) {
         final c = customers[i];
+        final isReceivable = c.balance > 0;
+        final color = isReceivable ? Colors.green : Colors.red;
+        final labelText = isReceivable ? 'You will get' : 'You will give';
+        
         return Card(
-          margin: const EdgeInsets.only(bottom: 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.only(bottom: 12),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade200),
+          ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: CircleAvatar(
               backgroundColor: color.withValues(alpha: 0.1),
-              child: Text(c.name[0].toUpperCase(), style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+              radius: 24,
+              child: Text(c.name[0].toUpperCase(), style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 18)),
             ),
-            title: Text(c.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text(c.primaryPhone, style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-            trailing: Text('₹${c.balance.abs().toStringAsFixed(0)}',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+            title: Text(c.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+            subtitle: Text(c.primaryPhone, style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('₹${c.balance.abs().toStringAsFixed(0)}',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+                Text(labelText, style: TextStyle(fontSize: 10, color: color.withOpacity(0.8), fontWeight: FontWeight.w500)),
+              ],
+            ),
           ),
         );
       },

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import '../../models/product_model.dart';
 import '../../services/product_service.dart';
+import '../../widgets/barcode_scanner_screen.dart';
 
 class AddProductScreen extends StatefulWidget {
   final ProductModel? existingProduct;
@@ -167,7 +168,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   kb: TextInputType.number)),
             ]),
             const SizedBox(height: 12),
-            _f(_barcodeCtrl, 'Barcode (optional)', 'Scan or type', Icons.barcode_reader),
+            _f(_barcodeCtrl, 'Barcode (optional)', 'Scan or type', Icons.barcode_reader, 
+              suffix: IconButton(
+                icon: const Icon(Icons.qr_code_scanner, color: Colors.blue),
+                onPressed: () async {
+                  final code = await Navigator.push<String>(context, MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()));
+                  if (code != null) setState(() => _barcodeCtrl.text = code);
+                },
+              )),
 
             const SizedBox(height: 32),
             SizedBox(
@@ -192,12 +200,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Widget _f(TextEditingController c, String l, String h, IconData ic,
-      {String? Function(String?)? v, TextInputType kb = TextInputType.text, int lines = 1}) {
+      {String? Function(String?)? v, TextInputType kb = TextInputType.text, int lines = 1, Widget? suffix}) {
     return TextFormField(
       controller: c, keyboardType: kb, maxLines: lines, validator: v,
       decoration: InputDecoration(
         labelText: l, hintText: h,
         prefixIcon: Icon(ic, color: Colors.blue.shade700),
+        suffixIcon: suffix,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.blue.shade700, width: 2)),

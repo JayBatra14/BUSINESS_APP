@@ -8,7 +8,8 @@ import '../services/local_db_service.dart';
 import 'dashboard_screen.dart';
 
 class BusinessSetupScreen extends StatefulWidget {
-  const BusinessSetupScreen({super.key});
+  final BusinessModel? existingBusiness;
+  const BusinessSetupScreen({super.key, this.existingBusiness});
 
   @override
   State<BusinessSetupScreen> createState() => _BusinessSetupScreenState();
@@ -41,6 +42,28 @@ class _BusinessSetupScreenState extends State<BusinessSetupScreen> {
     'Medical',
     'Other',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existingBusiness != null) {
+      final b = widget.existingBusiness!;
+      _businessNameController.text = b.businessName;
+      _ownerNameController.text = b.ownerName;
+      _phoneController.text = b.phone;
+      _altPhoneController.text = b.alternatePhone ?? '';
+      _emailController.text = b.email ?? '';
+      _gstController.text = b.gstNumber ?? '';
+      _addressController.text = b.address ?? '';
+      _cityController.text = b.city ?? '';
+      _stateController.text = b.state ?? '';
+      _pincodeController.text = b.pincode ?? '';
+      _selectedBusinessType = b.businessType;
+      if (b.logoPath != null && b.logoPath!.isNotEmpty && File(b.logoPath!).existsSync()) {
+        _selectedLogoFile = File(b.logoPath!);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -95,11 +118,43 @@ Future<void> _saveBusinessDetails() async {
     createdAt: DateTime.now(),
   );
 
-  // Save locally — no internet needed, no Firebase bills!
-  final businessId = await _localDb.saveBusiness(
-    business: business,
-    logoFile: _selectedLogoFile,
-  );
+    if (widget.existingBusiness != null) {
+      // Editing existing business
+      String? newLogoPath = widget.existingBusiness!.logoPath;
+      if (_selectedLogoFile != null && _selectedLogoFile!.path != widget.existingBusiness!.logoPath) {
+         newLogoPath = await _localDb.saveLogoLocally(_selectedLogoFile!);
+      }
+      final updatedBiz = BusinessModel(
+        id: widget.existingBusiness!.id,
+        businessName: business.businessName,
+        ownerName: business.ownerName,
+        businessType: business.businessType,
+        phone: business.phone,
+        alternatePhone: business.alternatePhone,
+        email: business.email,
+        gstNumber: business.gstNumber,
+        address: business.address,
+        city: business.city,
+        state: business.state,
+        pincode: business.pincode,
+        logoPath: newLogoPath,
+        createdAt: widget.existingBusiness!.createdAt,
+      );
+      await _localDb.updateBusiness(updatedBiz);
+      if (mounted) Navigator.pop(context);
+    } else {
+      // Create new business
+      final businessId = await _localDb.saveBusiness(
+        business: business,
+        logoFile: _selectedLogoFile,
+      );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => DashboardScreen(businessId: businessId)),
+        );
+      }
+    }
 
   setState(() => _isSaving = false);
 
@@ -108,12 +163,6 @@ Future<void> _saveBusinessDetails() async {
       const SnackBar(
         content: Text('Business saved successfully!'),
         backgroundColor: Colors.green,
-      ),
-    );
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => DashboardScreen(businessId: businessId),
       ),
     );
   }
@@ -198,7 +247,7 @@ Future<void> _saveBusinessDetails() async {
 
               // Business type dropdown
               DropdownButtonFormField<String>(
-                initialValue: _selectedBusinessType,
+                value: _selectedBusinessType,
                 decoration: InputDecoration(
                   labelText: 'Business Type',
                   prefixIcon:
@@ -332,9 +381,9 @@ Future<void> _saveBusinessDetails() async {
                             strokeWidth: 2.5,
                           ),
                         )
-                      : const Text(
-                          'Save & Continue',
-                          style: TextStyle(
+                      : Text(
+                          widget.existingBusiness != null ? 'Update Profile' : 'Save & Continue',
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                 ),
