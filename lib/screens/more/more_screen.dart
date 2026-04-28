@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../services/local_db_service.dart';
 import '../expenses/expense_list_screen.dart';
 import '../business_setup_screen.dart';
+import '../../services/backup_service.dart';
 import 'ledger_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -61,9 +62,11 @@ class MoreScreen extends StatelessWidget {
               builder: (_) => BusinessSetupScreen(existingBusiness: biz),
             ));
           }),
-          _menuItem(context, 'Backup Data', Icons.backup, Colors.teal, () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Backup — coming in next update')));
+          _menuItem(context, 'Export Backup', Icons.cloud_upload, Colors.teal, () async {
+            await BackupService.exportData(context);
+          }),
+          _menuItem(context, 'Restore Data', Icons.cloud_download, Colors.orange, () async {
+            await BackupService.importData(context);
           }),
 
           const SizedBox(height: 24),
