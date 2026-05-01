@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'local_db_service.dart';
 
 class BackupService {
   static const List<String> _boxes = [
@@ -47,7 +48,7 @@ class BackupService {
     }
   }
 
-  static Future<void> importData(BuildContext context) async {
+  static Future<String?> importData(BuildContext context) async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.any,
@@ -73,19 +74,36 @@ class BackupService {
             }
           }
         }
+
+        // Ensure a valid active business exists after restore.
+        final db = LocalDbService();
+        String? activeBusinessId = db.getActiveBusinessId();
+        if (activeBusinessId == null || db.getBusiness(activeBusinessId) == null) {
+          final businesses = db.getAllBusinesses();
+          if (businesses.isNotEmpty && businesses.first.id != null) {
+            activeBusinessId = businesses.first.id;
+            await db.setActiveBusinessId(activeBusinessId!);
+          }
+        }
         
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Data restored successfully! Please close and reopen the app.'), 
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              activeBusinessId != null
+                  ? 'Data restored successfully!'
+                  : 'Data restored, but no business found in backup.',
+            ),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 5),
+            duration: const Duration(seconds: 4),
           ));
         }
+        return activeBusinessId;
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Restore failed: $e'), backgroundColor: Colors.red));
       }
     }
+    return null;
   }
 }

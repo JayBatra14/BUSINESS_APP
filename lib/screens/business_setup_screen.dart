@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/business_model.dart';
+import '../services/backup_service.dart';
 import '../services/local_db_service.dart';
 import 'dashboard_screen.dart';
 
@@ -19,6 +20,7 @@ class _BusinessSetupScreenState extends State<BusinessSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _localDb = LocalDbService();
   bool _isSaving = false;
+  bool _isRestoring = false;
   File? _selectedLogoFile;
 
   // Controllers
@@ -172,6 +174,23 @@ Future<void> _saveBusinessDetails() async {
     );
   }
 }
+
+  Future<void> _restoreFromBackup() async {
+    if (_isRestoring || _isSaving) return;
+    setState(() => _isRestoring = true);
+    final restoredBusinessId = await BackupService.importData(context);
+    if (!mounted) return;
+    setState(() => _isRestoring = false);
+
+    if (restoredBusinessId != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DashboardScreen(businessId: restoredBusinessId),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -401,6 +420,30 @@ Future<void> _saveBusinessDetails() async {
                         ),
                 ),
               ),
+
+              if (widget.existingBusiness == null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: OutlinedButton.icon(
+                    onPressed: _isSaving || _isRestoring ? null : _restoreFromBackup,
+                    icon: _isRestoring
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.cloud_download_outlined),
+                    label: Text(_isRestoring ? 'Restoring...' : 'Restore from Backup'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 24),
             ],
