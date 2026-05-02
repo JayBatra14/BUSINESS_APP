@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
 import '../../models/order_model.dart';
 import '../../services/order_service.dart';
+import '../../services/csv_export_service.dart';
 import 'create_order_screen.dart';
 import 'order_detail_screen.dart';
 
@@ -43,6 +44,39 @@ class _OrderListScreenState extends State<OrderListScreen> {
         title: Text(AppStrings.tx(context, 'Orders')),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.file_download),
+            tooltip: AppStrings.tx(context, 'Export'),
+            onSelected: (value) async {
+              if (value == 'orders') {
+                await CsvExportService.exportOrders(context);
+              } else if (value == 'sales') {
+                await CsvExportService.exportSalesReport(context);
+              }
+            },
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                value: 'orders',
+                child: ListTile(
+                  leading: const Icon(Icons.receipt_long, color: Colors.blue),
+                  title: Text(AppStrings.tx(context, 'Export Order History')),
+                  subtitle: Text(AppStrings.tx(context, 'CSV for CA / accounting'), style: const TextStyle(fontSize: 11)),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'sales',
+                child: ListTile(
+                  leading: const Icon(Icons.table_chart, color: Colors.green),
+                  title: Text(AppStrings.tx(context, 'Export Sales Report')),
+                  subtitle: Text(AppStrings.tx(context, 'Item-wise breakdown'), style: const TextStyle(fontSize: 11)),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(children: [
         // Status filter chips

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
 import '../../services/customer_service.dart';
+import '../../services/csv_export_service.dart';
 import '../../models/customer_model.dart';
 
 class LedgerScreen extends StatefulWidget {
@@ -29,6 +30,15 @@ class _LedgerScreenState extends State<LedgerScreen> {
       appBar: AppBar(
         title: Text(AppStrings.tx(context, 'Ledger')),
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.file_download),
+            tooltip: AppStrings.tx(context, 'Export Ledger'),
+            onPressed: () async {
+              await CsvExportService.exportLedger(context);
+            },
+          ),
+        ],
       ),
       body: Column(children: [
         // Summary cards

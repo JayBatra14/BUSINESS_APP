@@ -7,6 +7,7 @@ import '../../services/local_db_service.dart';
 import '../expenses/expense_list_screen.dart';
 import '../business_setup_screen.dart';
 import '../../services/backup_service.dart';
+import '../../services/csv_export_service.dart';
 import 'ledger_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -56,6 +57,40 @@ class MoreScreen extends StatelessWidget {
           }),
           _menuItem(context, AppStrings.tx(context, 'Ledger'), Icons.book, Colors.purple, () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const LedgerScreen()));
+          }),
+          _menuItem(context, AppStrings.tx(context, 'Export Data (Excel/CSV)'), Icons.table_chart, Colors.green, () {
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+              builder: (ctx) => Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+                  const SizedBox(height: 20),
+                  Text(AppStrings.tx(context, 'Export Data'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    leading: const CircleAvatar(backgroundColor: Color(0x1A2196F3), child: Icon(Icons.receipt_long, color: Colors.blue)),
+                    title: Text(AppStrings.tx(context, 'Export Order History')),
+                    subtitle: Text(AppStrings.tx(context, 'CSV for CA / accounting'), style: const TextStyle(fontSize: 12)),
+                    onTap: () { Navigator.pop(ctx); CsvExportService.exportOrders(context); },
+                  ),
+                  ListTile(
+                    leading: const CircleAvatar(backgroundColor: Color(0x1A4CAF50), child: Icon(Icons.table_chart, color: Colors.green)),
+                    title: Text(AppStrings.tx(context, 'Export Sales Report')),
+                    subtitle: Text(AppStrings.tx(context, 'Item-wise breakdown'), style: const TextStyle(fontSize: 12)),
+                    onTap: () { Navigator.pop(ctx); CsvExportService.exportSalesReport(context); },
+                  ),
+                  ListTile(
+                    leading: const CircleAvatar(backgroundColor: Color(0x1A9C27B0), child: Icon(Icons.book, color: Colors.purple)),
+                    title: Text(AppStrings.tx(context, 'Export Ledger')),
+                    subtitle: Text(AppStrings.tx(context, 'Outstanding balances'), style: const TextStyle(fontSize: 12)),
+                    onTap: () { Navigator.pop(ctx); CsvExportService.exportLedger(context); },
+                  ),
+                  const SizedBox(height: 16),
+                ]),
+              ),
+            );
           }),
 
           const SizedBox(height: 24),

@@ -260,6 +260,15 @@ class AppStrings {
     'Wholesale': 'थोक',
     'Medical': 'चिकित्सा',
     'Other': 'अन्य',
+    'Export': 'निर्यात',
+    'Export Order History': 'ऑर्डर इतिहास निर्यात करें',
+    'Export Sales Report': 'बिक्री रिपोर्ट निर्यात करें',
+    'Export Ledger': 'लेजर निर्यात करें',
+    'CSV for CA / accounting': 'CA / अकाउंटिंग के लिए CSV',
+    'Item-wise breakdown': 'आइटम-वार विवरण',
+    'Export Data (Excel/CSV)': 'डेटा निर्यात (Excel/CSV)',
+    'Export Data': 'डेटा निर्यात',
+    'Outstanding balances': 'बकाया शेष',
   };
 
   static String t(BuildContext context, String key) {
