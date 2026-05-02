@@ -81,17 +81,24 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
     if (_isEdit) {
       await _customerService.updateCustomer(widget.existingCustomer!.id!, customer);
+      setState(() => _isSaving = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppStrings.tx(context, 'Customer updated!')),
+          backgroundColor: Colors.green,
+        ));
+        Navigator.pop(context, widget.existingCustomer!.id);
+      }
     } else {
-      await _customerService.addCustomer(customer);
-    }
-
-    setState(() => _isSaving = false);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(_isEdit ? AppStrings.tx(context, 'Customer updated!') : AppStrings.tx(context, 'Customer added!')),
-        backgroundColor: Colors.green,
-      ));
-      Navigator.pop(context, true);
+      final id = await _customerService.addCustomer(customer);
+      setState(() => _isSaving = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppStrings.tx(context, 'Customer added!')),
+          backgroundColor: Colors.green,
+        ));
+        Navigator.pop(context, id);
+      }
     }
   }
 
