@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/order_model.dart';
 import '../../services/pdf_invoice_service.dart';
 import '../../services/local_db_service.dart';
@@ -19,7 +20,7 @@ class InvoicePreviewScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Invoice Preview'),
+        title: Text(AppStrings.tx(context, 'Invoice Preview')),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
       ),

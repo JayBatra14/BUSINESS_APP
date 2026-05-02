@@ -1,6 +1,7 @@
 // lib/screens/orders/create_order_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/order_model.dart';
 import '../../models/customer_model.dart';
 import '../../models/product_model.dart';
@@ -72,7 +73,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 const SizedBox(height: 16),
                 TextField(
                   decoration: InputDecoration(
-                    hintText: 'Search customer...', prefixIcon: const Icon(Icons.search),
+                    hintText: AppStrings.tx(context, 'Search customer...'), prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     filled: true, fillColor: Colors.grey.shade50,
                   ),
@@ -82,7 +83,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 // Walk-in option
                 ListTile(
                   leading: CircleAvatar(backgroundColor: Colors.grey.shade200, child: const Icon(Icons.person_outline)),
-                  title: const Text('Walk-in Customer'),
+                  title: Text(AppStrings.tx(context, 'Walk-in Customer')),
                   onTap: () {
                     setState(() { _selectedCustomer = null; _billingAddr = null; _shippingAddr = null; });
                     Navigator.pop(ctx);
@@ -133,7 +134,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(16),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(isBilling ? 'Select Billing Address' : 'Select Delivery Address',
+          Text(isBilling ? AppStrings.tx(context, 'Select Billing Address') : AppStrings.tx(context, 'Select Delivery Address'),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 12),
           ...addrs.map((a) => Card(
@@ -173,7 +174,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 const SizedBox(height: 16),
                 TextField(
                   decoration: InputDecoration(
-                    hintText: 'Search product...', prefixIcon: const Icon(Icons.search),
+                    hintText: AppStrings.tx(context, 'Search product...'), prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     filled: true, fillColor: Colors.grey.shade50,
                   ),
@@ -182,7 +183,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 const SizedBox(height: 12),
                 Expanded(
                   child: filtered.isEmpty
-                      ? Center(child: Text('No products found', style: TextStyle(color: Colors.grey.shade400)))
+                      ? Center(child: Text(AppStrings.tx(context, 'No products found'), style: TextStyle(color: Colors.grey.shade400)))
                       : ListView.builder(
                           controller: scrollCtrl,
                           itemCount: filtered.length,
@@ -196,7 +197,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                 child: Icon(Icons.inventory_2, color: Colors.blue.shade700, size: 20),
                               ),
                               title: Text(p.name),
-                              subtitle: Text('₹${p.sellingPrice.toStringAsFixed(0)} • Stock: ${p.stockQty.toStringAsFixed(0)}'),
+                              subtitle: Text('₹${p.sellingPrice.toStringAsFixed(0)} • ${AppStrings.tx(context, "Stock")}: ${p.stockQty.toStringAsFixed(0)}'),
                               trailing: inCart
                                   ? Icon(Icons.check_circle, color: Colors.green.shade700)
                                   : Icon(Icons.add_circle_outline, color: Colors.blue.shade700),
@@ -219,7 +220,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   Future<void> _saveOrder() async {
     if (_cart.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Add at least one product'), backgroundColor: Colors.orange));
+        SnackBar(content: Text(AppStrings.tx(context, 'Add at least one product')), backgroundColor: Colors.orange));
       return;
     }
 
@@ -231,7 +232,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     final order = OrderModel(
       orderNumber: _orderSvc.getNextOrderNumber(),
       customerId: _selectedCustomer?.id,
-      customerName: _selectedCustomer?.name ?? 'Walk-in',
+      customerName: _selectedCustomer?.name ?? AppStrings.tx(context, 'Walk-in'),
       billingAddress: _billingAddr,
       shippingAddress: _shippingAddr,
       items: _cart.map((c) => OrderItemModel(
@@ -259,7 +260,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Order created!'), backgroundColor: Colors.green));
+        SnackBar(content: Text(AppStrings.tx(context, 'Order created!')), backgroundColor: Colors.green));
       Navigator.pop(context, true);
     }
   }
@@ -268,14 +269,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Sale / Order'),
+        title: Text(AppStrings.tx(context, 'New Sale / Order')),
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Customer selection
-          _sec('Customer'),
+          _sec(AppStrings.tx(context, 'Customer')),
           const SizedBox(height: 8),
           InkWell(
             onTap: _selectCustomer,
@@ -289,7 +290,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 Icon(_selectedCustomer != null ? Icons.person : Icons.person_add, color: Colors.blue.shade700),
                 const SizedBox(width: 12),
                 Expanded(child: Text(
-                  _selectedCustomer?.name ?? 'Select Customer (or Walk-in)',
+                  _selectedCustomer?.name ?? AppStrings.tx(context, 'Select Customer (or Walk-in)'),
                   style: TextStyle(color: _selectedCustomer != null ? Colors.black : Colors.grey.shade500),
                 )),
                 Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade400),
@@ -301,15 +302,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           if (_selectedCustomer != null && _selectedCustomer!.addresses.isNotEmpty) ...[
             const SizedBox(height: 12),
             Row(children: [
-              Expanded(child: _addrChip('Billing', _billingAddr, () => _selectAddress(true))),
+              Expanded(child: _addrChip(AppStrings.tx(context, 'Billing'), _billingAddr, () => _selectAddress(true))),
               const SizedBox(width: 8),
-              Expanded(child: _addrChip('Delivery', _shippingAddr, () => _selectAddress(false))),
+              Expanded(child: _addrChip(AppStrings.tx(context, 'Delivery'), _shippingAddr, () => _selectAddress(false))),
             ]),
           ],
 
           const SizedBox(height: 20),
           Row(children: [
-            _sec('Items'),
+            _sec(AppStrings.tx(context, 'Items')),
             const Spacer(),
             IconButton(
               onPressed: () async {
@@ -324,7 +325,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Product not found for this barcode'), backgroundColor: Colors.red));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppStrings.tx(context, 'Product not found for this barcode')), backgroundColor: Colors.red));
                     }
                   }
                 }
@@ -333,7 +334,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             ),
             TextButton.icon(
               onPressed: _addProduct,
-              icon: const Icon(Icons.add, size: 18), label: const Text('Add'),
+              icon: const Icon(Icons.add, size: 18), label: Text(AppStrings.tx(context, 'Add')),
             ),
           ]),
           const SizedBox(height: 8),
@@ -344,7 +345,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               child: Column(children: [
                 Icon(Icons.shopping_cart_outlined, color: Colors.grey.shade400, size: 40),
                 const SizedBox(height: 8),
-                Text('No items added', style: TextStyle(color: Colors.grey.shade500)),
+                Text(AppStrings.tx(context, 'No items added'), style: TextStyle(color: Colors.grey.shade500)),
               ]),
             ),
           ...List.generate(_cart.length, (i) => _cartItemCard(i)),
@@ -358,23 +359,23 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               border: Border.all(color: Colors.grey.shade200),
             ),
             child: Column(children: [
-              _totalRow('Subtotal', _subtotal),
-              if (_totalDiscount > 0) _totalRow('Discount', -_totalDiscount, isRed: true),
-              if (_totalTax > 0) _totalRow('Tax (GST)', _totalTax),
+              _totalRow(AppStrings.tx(context, 'Subtotal'), _subtotal),
+              if (_totalDiscount > 0) _totalRow(AppStrings.tx(context, 'Discount'), -_totalDiscount, isRed: true),
+              if (_totalTax > 0) _totalRow(AppStrings.tx(context, 'Tax (GST)'), _totalTax),
               const Divider(),
-              _totalRow('Grand Total', _grandTotal, isBold: true),
+              _totalRow(AppStrings.tx(context, 'Grand Total'), _grandTotal, isBold: true),
             ]),
           ),
 
           const SizedBox(height: 20),
-          _sec('Payment'),
+          _sec(AppStrings.tx(context, 'Payment')),
           const SizedBox(height: 8),
           Row(children: [
             Expanded(child: TextFormField(
               controller: _paidCtrl,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'Amount Paid', hintText: '0',
+                labelText: AppStrings.tx(context, 'Amount Paid'), hintText: '0',
                 prefixIcon: Icon(Icons.currency_rupee, color: Colors.blue.shade700),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true, fillColor: Colors.grey.shade50,
@@ -384,15 +385,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             Expanded(child: DropdownButtonFormField<String>(
               initialValue: _payMethod,
               decoration: InputDecoration(
-                labelText: 'Method',
+                labelText: AppStrings.tx(context, 'Method'),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true, fillColor: Colors.grey.shade50,
               ),
-              items: const [
-                DropdownMenuItem(value: 'cash', child: Text('Cash')),
+              items: [
+                DropdownMenuItem(value: 'cash', child: Text(AppStrings.tx(context, 'Cash'))),
                 DropdownMenuItem(value: 'upi', child: Text('UPI')),
-                DropdownMenuItem(value: 'card', child: Text('Card')),
-                DropdownMenuItem(value: 'bank_transfer', child: Text('Bank')),
+                DropdownMenuItem(value: 'card', child: Text(AppStrings.tx(context, 'Card'))),
+                DropdownMenuItem(value: 'bank_transfer', child: Text(AppStrings.tx(context, 'Bank'))),
               ],
               onChanged: (v) => setState(() => _payMethod = v!),
             )),
@@ -402,7 +403,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           TextFormField(
             controller: _notesCtrl, maxLines: 2,
             decoration: InputDecoration(
-              labelText: 'Notes (optional)', hintText: 'Order notes...',
+              labelText: AppStrings.tx(context, 'Notes (optional)'), hintText: AppStrings.tx(context, 'Order notes...'),
               prefixIcon: Icon(Icons.note, color: Colors.blue.shade700),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               filled: true, fillColor: Colors.grey.shade50,
@@ -420,7 +421,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               ),
               child: _saving
                   ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
-                  : const Text('Create Order', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  : Text(AppStrings.tx(context, 'Create Order'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 24),
@@ -449,7 +450,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             SizedBox(width: 80, child: TextFormField(
               initialValue: item.qty.toString(),
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Qty', isDense: true, border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: AppStrings.tx(context, 'Qty'), isDense: true, border: const OutlineInputBorder()),
               onChanged: (v) => setState(() => item.qty = double.tryParse(v) ?? 1),
             )),
             const SizedBox(width: 8),
@@ -457,7 +458,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             SizedBox(width: 100, child: TextFormField(
               initialValue: item.price.toString(),
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Price', isDense: true, border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: AppStrings.tx(context, 'Price'), isDense: true, border: const OutlineInputBorder()),
               onChanged: (v) => setState(() => item.price = double.tryParse(v) ?? item.product.sellingPrice),
             )),
             const SizedBox(width: 8),
@@ -465,7 +466,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             SizedBox(width: 70, child: TextFormField(
               initialValue: '0',
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Disc%', isDense: true, border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: AppStrings.tx(context, 'Disc%'), isDense: true, border: const OutlineInputBorder()),
               onChanged: (v) => setState(() => item.discount = double.tryParse(v) ?? 0),
             )),
             const Spacer(),
@@ -488,7 +489,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label, style: TextStyle(fontSize: 11, color: Colors.grey.shade500, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          Text(addr?.label ?? 'Select', style: TextStyle(fontSize: 13, color: addr != null ? Colors.black : Colors.grey.shade400)),
+          Text(addr?.label ?? AppStrings.tx(context, 'Select'), style: TextStyle(fontSize: 13, color: addr != null ? Colors.black : Colors.grey.shade400)),
         ]),
       ),
     );

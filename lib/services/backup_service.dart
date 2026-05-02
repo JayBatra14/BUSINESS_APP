@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import '../l10n/app_strings.dart';
 import 'local_db_service.dart';
 
 class BackupService {
@@ -17,6 +18,29 @@ class BackupService {
     'expenses',
     'ledger'
   ];
+
+  static Future<bool> _confirmRestore(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(AppStrings.t(ctx, 'restore_confirm_title')),
+          content: Text(AppStrings.t(ctx, 'restore_confirm_message')),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(AppStrings.t(ctx, 'cancel')),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(AppStrings.t(ctx, 'restore')),
+            ),
+          ],
+        );
+      },
+    );
+    return confirmed ?? false;
+  }
 
   static Future<void> exportData(BuildContext context) async {
     try {
@@ -50,6 +74,9 @@ class BackupService {
 
   static Future<String?> importData(BuildContext context) async {
     try {
+      final shouldProceed = await _confirmRestore(context);
+      if (!shouldProceed) return null;
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.any,
       );

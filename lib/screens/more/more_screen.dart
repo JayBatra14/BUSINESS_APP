@@ -1,6 +1,8 @@
 // lib/screens/more/more_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
+import '../../widgets/language_toggle_tile.dart';
 import '../../services/local_db_service.dart';
 import '../expenses/expense_list_screen.dart';
 import '../business_setup_screen.dart';
@@ -27,7 +29,7 @@ class MoreScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(biz?.businessName ?? 'My Business',
+              Text(biz?.businessName ?? AppStrings.tx(context, 'My Business'),
                   style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Text(biz?.ownerName ?? '', style: TextStyle(color: Colors.blue.shade100, fontSize: 14)),
@@ -37,42 +39,46 @@ class MoreScreen extends StatelessWidget {
               ],
               if (biz?.gstNumber != null && biz!.gstNumber!.isNotEmpty) ...[
                 const SizedBox(height: 4),
-                Text('GST: ${biz.gstNumber}', style: TextStyle(color: Colors.blue.shade100, fontSize: 13)),
+                Text(
+                  '${AppStrings.tx(context, "GST")}: ${biz.gstNumber}',
+                  style: TextStyle(color: Colors.blue.shade100, fontSize: 13),
+                ),
               ],
             ]),
           ),
 
           const SizedBox(height: 24),
-          _sectionTitle('Business Tools'),
+          _sectionTitle(AppStrings.tx(context, 'Business Tools')),
           const SizedBox(height: 12),
 
-          _menuItem(context, 'Expenses', Icons.money_off, Colors.red, () {
+          _menuItem(context, AppStrings.tx(context, 'Expenses'), Icons.money_off, Colors.red, () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpenseListScreen()));
           }),
-          _menuItem(context, 'Ledger', Icons.book, Colors.purple, () {
+          _menuItem(context, AppStrings.tx(context, 'Ledger'), Icons.book, Colors.purple, () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const LedgerScreen()));
           }),
 
           const SizedBox(height: 24),
-          _sectionTitle('Settings'),
+          _sectionTitle(AppStrings.tx(context, 'Settings')),
           const SizedBox(height: 12),
 
-          _menuItem(context, 'Edit Business Profile', Icons.edit, Colors.blue, () {
+          _menuItem(context, AppStrings.tx(context, 'Edit Business Profile'), Icons.edit, Colors.blue, () {
             Navigator.push(context, MaterialPageRoute(
               builder: (_) => BusinessSetupScreen(existingBusiness: biz),
             ));
           }),
-          _menuItem(context, 'Export Backup', Icons.cloud_upload, Colors.teal, () async {
+          _menuItem(context, AppStrings.tx(context, 'Export Backup'), Icons.cloud_upload, Colors.teal, () async {
             await BackupService.exportData(context);
           }),
-          _menuItem(context, 'Restore Data', Icons.cloud_download, Colors.orange, () async {
+          _menuItem(context, AppStrings.t(context, 'restore_data'), Icons.cloud_download, Colors.orange, () async {
             await BackupService.importData(context);
           }),
+          const LanguageToggleTile(),
 
           const SizedBox(height: 24),
-          _sectionTitle('About'),
+          _sectionTitle(AppStrings.tx(context, 'About')),
           const SizedBox(height: 12),
-          _menuItem(context, 'App Version 1.0.0', Icons.info_outline, Colors.grey, () {}),
+          _menuItem(context, AppStrings.t(context, 'app_version'), Icons.info_outline, Colors.grey, () {}),
 
           const SizedBox(height: 24),
         ]),

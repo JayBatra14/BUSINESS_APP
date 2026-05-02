@@ -1,6 +1,7 @@
 // lib/screens/customers/customer_list_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/customer_model.dart';
 import '../../services/customer_service.dart';
 import 'add_customer_screen.dart';
@@ -59,14 +60,14 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                 controller: _searchController,
                 autofocus: true,
                 style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  hintText: 'Search by name, phone...',
+                decoration: InputDecoration(
+                  hintText: AppStrings.tx(context, 'Search by name, phone...'),
                   hintStyle: TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                 ),
                 onChanged: _onSearch,
               )
-            : const Text('Customers'),
+            : Text(AppStrings.tx(context, 'Customers')),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
         actions: [
@@ -105,7 +106,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.person_add),
-        label: const Text('Add Customer'),
+        label: Text(AppStrings.tx(context, 'Add Customer')),
       ),
     );
   }
@@ -117,13 +118,13 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
         children: [
           Icon(Icons.people_outline, size: 80, color: Colors.grey.shade300),
           const SizedBox(height: 16),
-          Text('No customers yet',
+          Text(AppStrings.tx(context, 'No customers yet'),
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey.shade400)),
           const SizedBox(height: 8),
-          Text('Tap + to add your first customer',
+          Text(AppStrings.tx(context, 'Tap + to add your first customer'),
               style: TextStyle(color: Colors.grey.shade400)),
         ],
       ),

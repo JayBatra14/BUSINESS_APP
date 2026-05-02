@@ -1,6 +1,7 @@
 // lib/screens/customers/customer_detail_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/customer_model.dart';
 import '../../models/order_model.dart';
 import '../../services/customer_service.dart';
@@ -38,8 +39,8 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   Widget build(BuildContext context) {
     if (_customer == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Customer')),
-        body: const Center(child: Text('Customer not found')),
+        appBar: AppBar(title: Text(AppStrings.tx(context, 'Customer'))),
+        body: Center(child: Text(AppStrings.tx(context, 'Customer not found'))),
       );
     }
     final c = _customer!;
@@ -93,16 +94,16 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
               ]),
               const SizedBox(height: 16),
               Row(children: [
-                _statChip('Orders', '${_orders.length}', Icons.receipt_long),
+                _statChip(AppStrings.tx(context, 'Orders'), '${_orders.length}', Icons.receipt_long),
                 const SizedBox(width: 12),
-                _statChip('Balance', '₹${c.balance.toStringAsFixed(0)}',
+                _statChip(AppStrings.tx(context, 'Balance'), '₹${c.balance.toStringAsFixed(0)}',
                     c.balance > 0 ? Icons.arrow_upward : Icons.check_circle),
               ]),
             ]),
           ),
 
           const SizedBox(height: 20),
-          _sectionTitle('Phone Numbers'),
+          _sectionTitle(AppStrings.tx(context, 'Phone Numbers')),
           const SizedBox(height: 8),
           ...c.phoneNumbers.map((p) => Card(
             child: ListTile(
@@ -112,17 +113,17 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                 icon: const Icon(Icons.copy, size: 18),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Copied: $p')));
+                    SnackBar(content: Text('${AppStrings.tx(context, "Copied")}: $p')));
                 },
               ),
             ),
           )),
 
           const SizedBox(height: 20),
-          _sectionTitle('Addresses'),
+          _sectionTitle(AppStrings.tx(context, 'Addresses')),
           const SizedBox(height: 8),
           if (c.addresses.isEmpty)
-            _emptyCard('No addresses added'),
+            _emptyCard(AppStrings.tx(context, 'No addresses added')),
           ...c.addresses.map((a) => Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: Padding(
@@ -147,7 +148,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(6)),
-                      child: Text('DEFAULT', style: TextStyle(fontSize: 10, color: Colors.green.shade700, fontWeight: FontWeight.w600)),
+                      child: Text(AppStrings.tx(context, 'DEFAULT'), style: TextStyle(fontSize: 10, color: Colors.green.shade700, fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ]),
@@ -159,7 +160,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
 
           if (c.gstin != null && c.gstin!.isNotEmpty) ...[
             const SizedBox(height: 20),
-            _sectionTitle('GSTIN'),
+            _sectionTitle(AppStrings.tx(context, 'GSTIN')),
             const SizedBox(height: 8),
             Card(child: ListTile(
               leading: Icon(Icons.receipt, color: Colors.blue.shade700),
@@ -168,10 +169,10 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
           ],
 
           const SizedBox(height: 20),
-          _sectionTitle('Recent Orders'),
+          _sectionTitle(AppStrings.tx(context, 'Recent Orders')),
           const SizedBox(height: 8),
           if (_orders.isEmpty)
-            _emptyCard('No orders yet')
+            _emptyCard(AppStrings.tx(context, 'No orders yet'))
           else
             ...(_orders.take(10).map((o) => Card(
               child: ListTile(
@@ -235,17 +236,17 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
 
   void _confirmDelete() {
     showDialog(context: context, builder: (ctx) => AlertDialog(
-      title: const Text('Delete Customer?'),
-      content: const Text('This will permanently delete this customer.'),
+      title: Text(AppStrings.tx(context, 'Delete Customer?')),
+      content: Text(AppStrings.tx(context, 'This will permanently delete this customer.')),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppStrings.tx(context, 'Cancel'))),
         TextButton(
           onPressed: () {
             _custSvc.deleteCustomer(widget.customerId);
             Navigator.pop(ctx);
             Navigator.pop(context);
           },
-          child: Text('Delete', style: TextStyle(color: Colors.red.shade700)),
+          child: Text(AppStrings.tx(context, 'Delete'), style: TextStyle(color: Colors.red.shade700)),
         ),
       ],
     ));

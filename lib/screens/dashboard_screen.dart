@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../l10n/app_strings.dart';
 import '../models/business_model.dart';
 import '../models/order_model.dart';
 import '../services/local_db_service.dart';
@@ -85,12 +86,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() => _currentTab = i);
           if (i == 0) _loadData(); // refresh dashboard
         },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.people_outline), selectedIcon: Icon(Icons.people), label: 'Customers'),
-          NavigationDestination(icon: Icon(Icons.inventory_2_outlined), selectedIcon: Icon(Icons.inventory_2), label: 'Inventory'),
-          NavigationDestination(icon: Icon(Icons.receipt_long_outlined), selectedIcon: Icon(Icons.receipt_long), label: 'Orders'),
-          NavigationDestination(icon: Icon(Icons.more_horiz), label: 'More'),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.dashboard_outlined), selectedIcon: const Icon(Icons.dashboard), label: AppStrings.tx(context, 'Home')),
+          NavigationDestination(icon: const Icon(Icons.people_outline), selectedIcon: const Icon(Icons.people), label: AppStrings.tx(context, 'Customers')),
+          NavigationDestination(icon: const Icon(Icons.inventory_2_outlined), selectedIcon: const Icon(Icons.inventory_2), label: AppStrings.tx(context, 'Inventory')),
+          NavigationDestination(icon: const Icon(Icons.receipt_long_outlined), selectedIcon: const Icon(Icons.receipt_long), label: AppStrings.tx(context, 'Orders')),
+          NavigationDestination(icon: const Icon(Icons.more_horiz), label: AppStrings.tx(context, 'More')),
         ],
       ),
     );
@@ -110,7 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(_getGreeting(), style: const TextStyle(fontSize: 14, color: Color(0xFF64748B))),
               const SizedBox(height: 4),
-              Text(_business?.ownerName ?? 'Owner',
+              Text(_business?.ownerName ?? AppStrings.tx(context, 'Owner'),
                   style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFF0F172A), letterSpacing: -0.5)),
               Text(_business?.businessName ?? '',
                   style: TextStyle(fontSize: 14, color: primary, fontWeight: FontWeight.w600)),
@@ -136,7 +137,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: const Icon(Icons.trending_up, color: Colors.white, size: 24),
                 ),
                 const SizedBox(height: 16),
-                const Text("Today's Sales", style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500)),
+                Text(AppStrings.tx(context, "Today's Sales"), style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 Text('₹${todaySales.toStringAsFixed(0)}',
                     style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
@@ -158,7 +159,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Icon(Icons.money_off, color: Colors.red.shade400, size: 24),
                 ),
                 const SizedBox(height: 16),
-                const Text("Today's Expenses", style: TextStyle(color: Color(0xFF64748B), fontSize: 13, fontWeight: FontWeight.w500)),
+                Text(AppStrings.tx(context, "Today's Expenses"), style: const TextStyle(color: Color(0xFF64748B), fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
                 Text('₹${todayExpenses.toStringAsFixed(0)}',
                     style: const TextStyle(color: Color(0xFF0F172A), fontSize: 26, fontWeight: FontWeight.bold)),
@@ -170,11 +171,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           // Summary cards
           Row(children: [
-            Expanded(child: _buildSummaryCard(title: 'Customers', value: '$totalCustomers', icon: Icons.people_outline, color: const Color(0xFF3B82F6))),
+            Expanded(child: _buildSummaryCard(title: AppStrings.tx(context, 'Customers'), value: '$totalCustomers', icon: Icons.people_outline, color: const Color(0xFF3B82F6))),
             const SizedBox(width: 12),
-            Expanded(child: _buildSummaryCard(title: 'Products', value: '$totalProducts', icon: Icons.inventory_2_outlined, color: const Color(0xFF8B5CF6))),
+            Expanded(child: _buildSummaryCard(title: AppStrings.tx(context, 'Products'), value: '$totalProducts', icon: Icons.inventory_2_outlined, color: const Color(0xFF8B5CF6))),
             const SizedBox(width: 12),
-            Expanded(child: _buildSummaryCard(title: 'Orders', value: '$totalOrders', icon: Icons.receipt_long_outlined, color: const Color(0xFF10B981))),
+            Expanded(child: _buildSummaryCard(title: AppStrings.tx(context, 'Orders'), value: '$totalOrders', icon: Icons.receipt_long_outlined, color: const Color(0xFF10B981))),
           ]),
 
           // Low stock alert
@@ -191,13 +192,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Icon(Icons.warning_amber, color: Colors.orange.shade700, size: 24),
                 const SizedBox(width: 12),
                 Expanded(child: Text(
-                  '${_productSvc.getLowStockProducts().length} products are low on stock!',
+                  '${_productSvc.getLowStockProducts().length} ${AppStrings.tx(context, 'products low on stock')}!',
                   style: TextStyle(color: Colors.orange.shade800, fontWeight: FontWeight.w600, fontSize: 14),
                 )),
                 TextButton(
                   onPressed: () => setState(() => _currentTab = 2),
                   style: TextButton.styleFrom(foregroundColor: Colors.orange.shade800),
-                  child: const Text('View'),
+                  child: Text(AppStrings.tx(context, 'View')),
                 ),
               ]),
             ),
@@ -206,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(height: 32),
 
           // Weekly chart
-          const Text('Last 7 Days Sales', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+          Text(AppStrings.tx(context, 'Last 7 Days Sales'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
           const SizedBox(height: 16),
           Container(
             height: 240, padding: const EdgeInsets.all(20),
@@ -216,7 +217,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))]
             ),
             child: weeklySales.isEmpty || weeklySales.every((v) => v == 0)
-                ? const Center(child: Text('No sales data yet', style: TextStyle(color: Color(0xFF94A3B8))))
+                ? Center(child: Text(AppStrings.tx(context, 'No sales data yet'), style: const TextStyle(color: Color(0xFF94A3B8))))
                 : BarChart(BarChartData(
                     alignment: BarChartAlignment.spaceAround,
                     maxY: maxY,
@@ -259,22 +260,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(height: 32),
 
           // Quick actions
-          const Text('Quick Actions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+          Text(AppStrings.tx(context, 'Quick Actions'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
           const SizedBox(height: 16),
           Row(children: [
-            Expanded(child: _buildQuickAction(label: 'New Sale', icon: Icons.add_shopping_cart, color: const Color(0xFF3B82F6),
+            Expanded(child: _buildQuickAction(label: AppStrings.tx(context, 'New Sale'), icon: Icons.add_shopping_cart, color: const Color(0xFF3B82F6),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateOrderScreen()));
                 _loadData();
               })),
             const SizedBox(width: 12),
-            Expanded(child: _buildQuickAction(label: 'Add Customer', icon: Icons.person_add, color: const Color(0xFF8B5CF6),
+            Expanded(child: _buildQuickAction(label: AppStrings.tx(context, 'Add Customer'), icon: Icons.person_add, color: const Color(0xFF8B5CF6),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (_) => const AddCustomerScreen()));
                 _loadData();
               })),
             const SizedBox(width: 12),
-            Expanded(child: _buildQuickAction(label: 'Add Product', icon: Icons.add_box, color: const Color(0xFFF59E0B),
+            Expanded(child: _buildQuickAction(label: AppStrings.tx(context, 'Add Product'), icon: Icons.add_box, color: const Color(0xFFF59E0B),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (_) => const AddProductScreen()));
                 _loadData();
@@ -287,10 +288,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Recent Orders', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+              Text(AppStrings.tx(context, 'Recent Orders'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
               TextButton(
                 onPressed: () => setState(() => _currentTab = 3),
-                child: Text('View All', style: TextStyle(color: primary, fontWeight: FontWeight.w600)),
+                child: Text(AppStrings.tx(context, 'View All'), style: TextStyle(color: primary, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -299,10 +300,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Container(
               width: double.infinity, padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFFE2E8F0))),
-              child: const Column(children: [
+              child: Column(children: [
                 Icon(Icons.receipt_long_outlined, size: 48, color: Color(0xFFCBD5E1)),
                 SizedBox(height: 12),
-                Text('No orders yet', style: TextStyle(color: Color(0xFF64748B), fontSize: 16)),
+                Text(AppStrings.tx(context, 'No orders yet'), style: const TextStyle(color: Color(0xFF64748B), fontSize: 16)),
               ]),
             )
           else
@@ -324,9 +325,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   child: Icon(_statusIcn(o.status), size: 20, color: _statusClr(o.status)),
                 ),
-                title: Text('${o.orderNumber} • ${o.customerName ?? "Walk-in"}',
+                title: Text('${o.orderNumber} • ${o.customerName ?? AppStrings.tx(context, "Walk-in")}',
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
-                subtitle: Text('${o.items.length} items • ${o.createdAt.day}/${o.createdAt.month}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 13)),
+                subtitle: Text('${o.items.length} ${AppStrings.tx(context, "items")} • ${o.createdAt.day}/${o.createdAt.month}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 13)),
                 trailing: Text('₹${o.grandTotal.toStringAsFixed(0)}',
                     style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 16)),
               ),
@@ -407,8 +408,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning,';
-    if (hour < 17) return 'Good Afternoon,';
-    return 'Good Evening,';
+    if (hour < 12) return AppStrings.tx(context, 'Good Morning,');
+    if (hour < 17) return AppStrings.tx(context, 'Good Afternoon,');
+    return AppStrings.tx(context, 'Good Evening,');
   }
 }

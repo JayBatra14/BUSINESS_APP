@@ -3,9 +3,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../l10n/app_strings.dart';
 import '../models/business_model.dart';
 import '../services/backup_service.dart';
+import '../services/language_service.dart';
 import '../services/local_db_service.dart';
+import '../widgets/language_toggle_tile.dart';
 import 'dashboard_screen.dart';
 
 class BusinessSetupScreen extends StatefulWidget {
@@ -167,8 +170,8 @@ Future<void> _saveBusinessDetails() async {
 
   if (mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Business saved successfully!'),
+      SnackBar(
+        content: Text(AppStrings.tx(context, 'Business saved successfully!')),
         backgroundColor: Colors.green,
       ),
     );
@@ -194,9 +197,12 @@ Future<void> _saveBusinessDetails() async {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ValueListenableBuilder<Locale>(
+      valueListenable: LanguageService.localeNotifier,
+      builder: (context, Locale value, Widget? child) {
+        return Scaffold(
       appBar: AppBar(
-        title: const Text('Setup Your Business'),
+        title: Text(AppStrings.t(context, 'setup_business')),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
       ),
@@ -207,6 +213,8 @@ Future<void> _saveBusinessDetails() async {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const LanguageToggleTile(),
+              const SizedBox(height: 16),
 
               // Logo picker
               Center(
@@ -234,7 +242,7 @@ Future<void> _saveBusinessDetails() async {
                               Icon(Icons.add_a_photo,
                                   color: Colors.blue.shade700, size: 28),
                               const SizedBox(height: 4),
-                              Text('Add Logo',
+                              Text(AppStrings.tx(context, 'Add Logo'),
                                   style: TextStyle(
                                       fontSize: 11,
                                       color: Colors.blue.shade700)),
@@ -246,26 +254,26 @@ Future<void> _saveBusinessDetails() async {
               ),
 
               const SizedBox(height: 24),
-              _sectionHeader('Business Information'),
+              _sectionHeader(AppStrings.tx(context, 'Business Information')),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _businessNameController,
-                label: 'Business Name *',
-                hint: 'e.g. Sharma Electronics',
+                label: AppStrings.tx(context, 'Business Name *'),
+                hint: AppStrings.tx(context, 'e.g. Sharma Electronics'),
                 icon: Icons.store,
                 validator: (val) =>
-                    val!.isEmpty ? 'Business name is required' : null,
+                    val!.isEmpty ? AppStrings.tx(context, 'Business name is required') : null,
               ),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _ownerNameController,
-                label: 'Owner Name *',
-                hint: 'e.g. Ramesh Sharma',
+                label: AppStrings.tx(context, 'Owner Name *'),
+                hint: AppStrings.tx(context, 'e.g. Ramesh Sharma'),
                 icon: Icons.person,
                 validator: (val) =>
-                    val!.isEmpty ? 'Owner name is required' : null,
+                    val!.isEmpty ? AppStrings.tx(context, 'Owner name is required') : null,
               ),
               const SizedBox(height: 12),
 
@@ -273,7 +281,7 @@ Future<void> _saveBusinessDetails() async {
               DropdownButtonFormField<String>(
                 value: _selectedBusinessType,
                 decoration: InputDecoration(
-                  labelText: 'Business Type',
+                  labelText: AppStrings.tx(context, 'Business Type'),
                   prefixIcon:
                       Icon(Icons.category, color: Colors.blue.shade700),
                   border: OutlineInputBorder(
@@ -287,8 +295,10 @@ Future<void> _saveBusinessDetails() async {
                   fillColor: Colors.grey.shade50,
                 ),
                 items: _businessTypes
-                    .map((type) =>
-                        DropdownMenuItem(value: type, child: Text(type)))
+                    .map((type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(AppStrings.tx(context, type)),
+                        ))
                     .toList(),
                 onChanged: (val) =>
                     setState(() => _selectedBusinessType = val!),
@@ -297,39 +307,39 @@ Future<void> _saveBusinessDetails() async {
 
               _buildTextField(
                 controller: _gstController,
-                label: 'GST Number (optional)',
-                hint: 'e.g. 07AAAPL1234C1ZV',
+                label: AppStrings.tx(context, 'GST Number (optional)'),
+                hint: AppStrings.tx(context, 'e.g. 07AAAPL1234C1ZV'),
                 icon: Icons.receipt_long,
               ),
               const SizedBox(height: 12),
               
               _buildTextField(
                 controller: _upiIdController,
-                label: 'UPI ID for Payments (optional)',
-                hint: 'e.g. sharma@ybl',
+                label: AppStrings.tx(context, 'UPI ID for Payments (optional)'),
+                hint: AppStrings.tx(context, 'e.g. sharma@ybl'),
                 icon: Icons.qr_code,
               ),
 
               const SizedBox(height: 24),
-              _sectionHeader('Contact Details'),
+              _sectionHeader(AppStrings.tx(context, 'Contact Details')),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _phoneController,
-                label: 'Mobile Number *',
-                hint: 'e.g. 9876543210',
+                label: AppStrings.tx(context, 'Mobile Number *'),
+                hint: AppStrings.tx(context, 'e.g. 9876543210'),
                 icon: Icons.phone,
                 keyboardType: TextInputType.phone,
                 validator: (val) => val!.length != 10
-                    ? 'Enter valid 10 digit number'
+                    ? AppStrings.tx(context, 'Enter valid 10 digit number')
                     : null,
               ),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _altPhoneController,
-                label: 'Alternate Number (optional)',
-                hint: 'e.g. 9876543211',
+                label: AppStrings.tx(context, 'Alternate Number (optional)'),
+                hint: AppStrings.tx(context, 'e.g. 9876543211'),
                 icon: Icons.phone_forwarded,
                 keyboardType: TextInputType.phone,
               ),
@@ -337,55 +347,55 @@ Future<void> _saveBusinessDetails() async {
 
               _buildTextField(
                 controller: _emailController,
-                label: 'Email (optional)',
-                hint: 'e.g. sharma@gmail.com',
+                label: AppStrings.tx(context, 'Email (optional)'),
+                hint: AppStrings.tx(context, 'e.g. sharma@gmail.com'),
                 icon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
               ),
 
               const SizedBox(height: 24),
-              _sectionHeader('Business Address'),
+              _sectionHeader(AppStrings.tx(context, 'Business Address')),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _addressController,
-                label: 'Street Address *',
-                hint: 'e.g. Shop No. 5, Main Market',
+                label: AppStrings.tx(context, 'Street Address *'),
+                hint: AppStrings.tx(context, 'e.g. Shop No. 5, Main Market'),
                 icon: Icons.location_on,
                 maxLines: 2,
                 validator: (val) =>
-                    val!.isEmpty ? 'Address is required' : null,
+                    val!.isEmpty ? AppStrings.tx(context, 'Address is required') : null,
               ),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _cityController,
-                label: 'City *',
-                hint: 'e.g. Agra',
+                label: AppStrings.tx(context, 'City *'),
+                hint: AppStrings.tx(context, 'e.g. Agra'),
                 icon: Icons.location_city,
                 validator: (val) =>
-                    val!.isEmpty ? 'City is required' : null,
+                    val!.isEmpty ? AppStrings.tx(context, 'City is required') : null,
               ),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _stateController,
-                label: 'State *',
-                hint: 'e.g. Uttar Pradesh',
+                label: AppStrings.tx(context, 'State *'),
+                hint: AppStrings.tx(context, 'e.g. Uttar Pradesh'),
                 icon: Icons.map,
                 validator: (val) =>
-                    val!.isEmpty ? 'State is required' : null,
+                    val!.isEmpty ? AppStrings.tx(context, 'State is required') : null,
               ),
               const SizedBox(height: 12),
 
               _buildTextField(
                 controller: _pincodeController,
-                label: 'Pincode *',
-                hint: 'e.g. 282001',
+                label: AppStrings.tx(context, 'Pincode *'),
+                hint: AppStrings.tx(context, 'e.g. 282001'),
                 icon: Icons.pin_drop,
                 keyboardType: TextInputType.number,
                 validator: (val) => val!.length != 6
-                    ? 'Enter valid 6 digit pincode'
+                    ? AppStrings.tx(context, 'Enter valid 6 digit pincode')
                     : null,
               ),
 
@@ -414,7 +424,9 @@ Future<void> _saveBusinessDetails() async {
                           ),
                         )
                       : Text(
-                          widget.existingBusiness != null ? 'Update Profile' : 'Save & Continue',
+                          widget.existingBusiness != null
+                              ? AppStrings.tx(context, 'Update Profile')
+                              : AppStrings.t(context, 'save_continue'),
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -435,7 +447,11 @@ Future<void> _saveBusinessDetails() async {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.cloud_download_outlined),
-                    label: Text(_isRestoring ? 'Restoring...' : 'Restore from Backup'),
+                    label: Text(
+                      _isRestoring
+                          ? AppStrings.t(context, 'restoring')
+                          : AppStrings.t(context, 'restore_from_backup'),
+                    ),
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -450,6 +466,8 @@ Future<void> _saveBusinessDetails() async {
           ),
         ),
       ),
+        );
+      },
     );
   }
 

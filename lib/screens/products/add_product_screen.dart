@@ -1,6 +1,7 @@
 // lib/screens/products/add_product_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/product_model.dart';
 import '../../services/product_service.dart';
 import '../../widgets/barcode_scanner_screen.dart';
@@ -95,7 +96,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() => _saving = false);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(_isEdit ? 'Product updated!' : 'Product added!'),
+        content: Text(_isEdit ? AppStrings.tx(context, 'Product updated!') : AppStrings.tx(context, 'Product added!')),
         backgroundColor: Colors.green,
       ));
       Navigator.pop(context, true);
@@ -106,7 +107,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? 'Edit Product' : 'Add Product'),
+        title: Text(_isEdit ? AppStrings.tx(context, 'Edit Product') : AppStrings.tx(context, 'Add Product')),
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -114,61 +115,61 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: Form(
           key: _formKey,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _sec('Product Details'),
+            _sec(AppStrings.tx(context, 'Product Details')),
             const SizedBox(height: 12),
-            _f(_nameCtrl, 'Product Name *', 'e.g. Samsung Galaxy M34', Icons.inventory_2,
-                v: (s) => s!.isEmpty ? 'Required' : null),
+            _f(_nameCtrl, AppStrings.tx(context, 'Product Name *'), 'e.g. Samsung Galaxy M34', Icons.inventory_2,
+                v: (s) => s!.isEmpty ? AppStrings.tx(context, 'Required') : null),
             const SizedBox(height: 12),
-            _f(_skuCtrl, 'SKU / Item Code', 'e.g. SKU-001', Icons.qr_code),
+            _f(_skuCtrl, AppStrings.tx(context, 'SKU / Item Code'), 'e.g. SKU-001', Icons.qr_code),
             const SizedBox(height: 12),
             Row(children: [
               Expanded(child: DropdownButtonFormField<String>(
                 initialValue: _category,
-                decoration: _dd('Category', Icons.category),
+                decoration: _dd(AppStrings.tx(context, 'Category'), Icons.category),
                 items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
                 onChanged: (v) => setState(() => _category = v!),
               )),
               const SizedBox(width: 12),
               Expanded(child: DropdownButtonFormField<String>(
                 initialValue: _unit,
-                decoration: _dd('Unit', Icons.straighten),
+                decoration: _dd(AppStrings.tx(context, 'Unit'), Icons.straighten),
                 items: _units.map((u) => DropdownMenuItem(value: u, child: Text(u))).toList(),
                 onChanged: (v) => setState(() => _unit = v!),
               )),
             ]),
             const SizedBox(height: 12),
-            _f(_descCtrl, 'Description (optional)', 'Product details...', Icons.description, lines: 2),
+            _f(_descCtrl, AppStrings.tx(context, 'Description (optional)'), AppStrings.tx(context, 'Product details...'), Icons.description, lines: 2),
 
             const SizedBox(height: 24),
-            _sec('Pricing'),
+            _sec(AppStrings.tx(context, 'Pricing')),
             const SizedBox(height: 12),
             Row(children: [
-              Expanded(child: _f(_priceCtrl, 'Selling Price *', '₹', Icons.currency_rupee,
-                  kb: TextInputType.number, v: (s) => s!.isEmpty ? 'Required' : null)),
+              Expanded(child: _f(_priceCtrl, AppStrings.tx(context, 'Selling Price *'), '₹', Icons.currency_rupee,
+                  kb: TextInputType.number, v: (s) => s!.isEmpty ? AppStrings.tx(context, 'Required') : null)),
               const SizedBox(width: 12),
-              Expanded(child: _f(_costCtrl, 'Cost Price', '₹', Icons.money,
+              Expanded(child: _f(_costCtrl, AppStrings.tx(context, 'Cost Price'), '₹', Icons.money,
                   kb: TextInputType.number)),
             ]),
             const SizedBox(height: 12),
             Row(children: [
-              Expanded(child: _f(_taxCtrl, 'Tax / GST %', '0', Icons.percent,
+              Expanded(child: _f(_taxCtrl, AppStrings.tx(context, 'Tax / GST %'), '0', Icons.percent,
                   kb: TextInputType.number)),
               const SizedBox(width: 12),
-              Expanded(child: _f(_hsnCtrl, 'HSN Code', 'Optional', Icons.tag)),
+              Expanded(child: _f(_hsnCtrl, AppStrings.tx(context, 'HSN Code'), AppStrings.tx(context, 'Optional'), Icons.tag)),
             ]),
 
             const SizedBox(height: 24),
-            _sec('Stock'),
+            _sec(AppStrings.tx(context, 'Stock')),
             const SizedBox(height: 12),
             Row(children: [
-              Expanded(child: _f(_stockCtrl, 'Current Stock *', '0', Icons.warehouse,
-                  kb: TextInputType.number, v: (s) => s!.isEmpty ? 'Required' : null)),
+              Expanded(child: _f(_stockCtrl, AppStrings.tx(context, 'Current Stock *'), '0', Icons.warehouse,
+                  kb: TextInputType.number, v: (s) => s!.isEmpty ? AppStrings.tx(context, 'Required') : null)),
               const SizedBox(width: 12),
-              Expanded(child: _f(_lowStockCtrl, 'Low Stock Alert', '5', Icons.warning_amber,
+              Expanded(child: _f(_lowStockCtrl, AppStrings.tx(context, 'Low Stock Alert'), '5', Icons.warning_amber,
                   kb: TextInputType.number)),
             ]),
             const SizedBox(height: 12),
-            _f(_barcodeCtrl, 'Barcode (optional)', 'Scan or type', Icons.barcode_reader, 
+            _f(_barcodeCtrl, AppStrings.tx(context, 'Barcode (optional)'), AppStrings.tx(context, 'Scan or type'), Icons.barcode_reader, 
               suffix: IconButton(
                 icon: const Icon(Icons.qr_code_scanner, color: Colors.blue),
                 onPressed: () async {
@@ -188,7 +189,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 ),
                 child: _saving
                     ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
-                    : Text(_isEdit ? 'Update Product' : 'Save Product',
+                    : Text(_isEdit ? AppStrings.tx(context, 'Update Product') : AppStrings.tx(context, 'Save Product'),
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),

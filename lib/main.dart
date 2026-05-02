@@ -1,10 +1,12 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'screens/business_setup_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'services/language_service.dart';
 import 'services/local_db_service.dart';
 import 'theme/app_theme.dart';
 
@@ -23,6 +25,7 @@ void main() async {
   await Hive.openBox('orders');
   await Hive.openBox('expenses');
   await Hive.openBox('ledger');
+  await LanguageService.init();
 
   runApp(const MyApp());
 }
@@ -37,13 +40,25 @@ class MyApp extends StatelessWidget {
     final activeId = db.getActiveBusinessId();
     final hasBusiness = activeId != null && db.getBusiness(activeId) != null;
 
-    return MaterialApp(
-      title: 'Business App',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: hasBusiness
-          ? DashboardScreen(businessId: activeId)
-          : const BusinessSetupScreen(),
+    return ValueListenableBuilder<Locale>(
+      valueListenable: LanguageService.localeNotifier,
+      builder: (context, locale, _) {
+        return MaterialApp(
+          title: 'Business App',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          locale: locale,
+          supportedLocales: const [Locale('en'), Locale('hi')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: hasBusiness
+              ? DashboardScreen(businessId: activeId)
+              : const BusinessSetupScreen(),
+        );
+      },
     );
   }
 }

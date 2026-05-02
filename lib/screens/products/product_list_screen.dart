@@ -1,6 +1,7 @@
 // lib/screens/products/product_list_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/product_model.dart';
 import '../../services/product_service.dart';
 import 'add_product_screen.dart';
@@ -64,13 +65,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
             ? TextField(
                 controller: _searchCtrl, autofocus: true,
                 style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  hintText: 'Search products...', hintStyle: TextStyle(color: Colors.white70),
+                decoration: InputDecoration(
+                  hintText: AppStrings.tx(context, 'Search products...'), hintStyle: const TextStyle(color: Colors.white70),
                   border: InputBorder.none,
                 ),
                 onChanged: (_) => setState(() => _applyFilter()),
               )
-            : const Text('Products'),
+            : Text(AppStrings.tx(context, 'Products')),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
         actions: [
@@ -94,7 +95,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               children: cats.map((cat) => Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ChoiceChip(
-                  label: Text(cat),
+                  label: Text(cat == 'All' ? AppStrings.tx(context, 'All') : cat),
                   selected: _selectedCat == cat,
                   selectedColor: Colors.blue.shade100,
                   onSelected: (_) => setState(() { _selectedCat = cat; _applyFilter(); }),
@@ -114,7 +115,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             child: Row(children: [
               Icon(Icons.warning_amber, color: Colors.orange.shade700, size: 18),
               const SizedBox(width: 8),
-              Text('${_svc.getLowStockProducts().length} products low on stock',
+              Text('${_svc.getLowStockProducts().length} ${AppStrings.tx(context, 'products low on stock')}',
                   style: TextStyle(color: Colors.orange.shade700, fontSize: 13, fontWeight: FontWeight.w500)),
             ]),
           ),
@@ -135,7 +136,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           _load();
         },
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
-        icon: const Icon(Icons.add_box), label: const Text('Add Product'),
+        icon: const Icon(Icons.add_box), label: Text(AppStrings.tx(context, 'Add Product')),
       ),
     );
   }
@@ -158,7 +159,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           Text('₹${p.sellingPrice.toStringAsFixed(0)} • ${p.category}',
               style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
           Row(children: [
-            Text('Stock: ${p.stockQty.toStringAsFixed(0)} ${p.unit}',
+            Text('${AppStrings.tx(context, "Stock")}: ${p.stockQty.toStringAsFixed(0)} ${p.unit}',
                 style: TextStyle(
                   color: p.isLowStock ? Colors.red.shade700 : Colors.grey.shade500,
                   fontSize: 12, fontWeight: p.isLowStock ? FontWeight.bold : FontWeight.normal,
@@ -180,12 +181,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
               _svc.deleteProduct(p.id!);
               _load();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Product deleted'), backgroundColor: Colors.red));
+                SnackBar(content: Text(AppStrings.tx(context, 'Product deleted')), backgroundColor: Colors.red));
             }
           },
           itemBuilder: (_) => [
-            const PopupMenuItem(value: 'edit', child: Text('Edit')),
-            const PopupMenuItem(value: 'delete', child: Text('Delete')),
+            PopupMenuItem(value: 'edit', child: Text(AppStrings.tx(context, 'Edit'))),
+            PopupMenuItem(value: 'delete', child: Text(AppStrings.tx(context, 'Delete'))),
           ],
         ),
       ),
@@ -196,9 +197,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey.shade300),
       const SizedBox(height: 16),
-      Text('No products yet', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade400)),
+      Text(AppStrings.tx(context, 'No products yet'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade400)),
       const SizedBox(height: 8),
-      Text('Tap + to add your first product', style: TextStyle(color: Colors.grey.shade400)),
+      Text(AppStrings.tx(context, 'Tap + to add your first product'), style: TextStyle(color: Colors.grey.shade400)),
     ]),
   );
 }

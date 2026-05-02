@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/customer_model.dart';
 import '../../models/address_model.dart';
 import '../../services/customer_service.dart';
@@ -87,7 +88,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     setState(() => _isSaving = false);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(_isEdit ? 'Customer updated!' : 'Customer added!'),
+        content: Text(_isEdit ? AppStrings.tx(context, 'Customer updated!') : AppStrings.tx(context, 'Customer added!')),
         backgroundColor: Colors.green,
       ));
       Navigator.pop(context, true);
@@ -98,7 +99,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? 'Edit Customer' : 'Add Customer'),
+        title: Text(_isEdit ? AppStrings.tx(context, 'Edit Customer') : AppStrings.tx(context, 'Add Customer')),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
       ),
@@ -107,24 +108,24 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
         child: Form(
           key: _formKey,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _section('Basic Information'),
+            _section(AppStrings.tx(context, 'Basic Information')),
             const SizedBox(height: 12),
-            _field(_nameCtrl, 'Customer Name *', 'e.g. Rajesh Kumar', Icons.person,
-                validator: (v) => v!.isEmpty ? 'Required' : null),
+            _field(_nameCtrl, AppStrings.tx(context, 'Customer Name *'), 'e.g. Rajesh Kumar', Icons.person,
+                validator: (v) => v!.isEmpty ? AppStrings.tx(context, 'Required') : null),
             const SizedBox(height: 12),
-            _field(_emailCtrl, 'Email (optional)', 'rajesh@gmail.com', Icons.email,
+            _field(_emailCtrl, AppStrings.tx(context, 'Email (optional)'), 'rajesh@gmail.com', Icons.email,
                 keyboard: TextInputType.emailAddress),
             const SizedBox(height: 12),
-            _field(_gstinCtrl, 'GSTIN (optional)', '07AAAPL1234C1ZV', Icons.receipt),
+            _field(_gstinCtrl, AppStrings.tx(context, 'GSTIN (optional)'), '07AAAPL1234C1ZV', Icons.receipt),
 
             const SizedBox(height: 24),
             Row(children: [
-              _section('Phone Numbers'),
+              _section(AppStrings.tx(context, 'Phone Numbers')),
               const Spacer(),
               TextButton.icon(
                 onPressed: () => setState(() => _phoneCtrs.add(TextEditingController())),
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('Add'),
+                label: Text(AppStrings.tx(context, 'Add')),
               ),
             ]),
             const SizedBox(height: 8),
@@ -133,10 +134,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
               child: Row(children: [
                 Expanded(child: _field(
                   _phoneCtrs[i],
-                  i == 0 ? 'Primary Phone *' : 'Phone ${i + 1}',
+                  i == 0 ? AppStrings.tx(context, 'Primary Phone *') : '${AppStrings.tx(context, "Phone")} ${i + 1}',
                   '9876543210', Icons.phone,
                   keyboard: TextInputType.phone,
-                  validator: i == 0 ? (v) => v!.length != 10 ? 'Enter 10 digits' : null : null,
+                  validator: i == 0 ? (v) => v!.length != 10 ? AppStrings.tx(context, 'Enter 10 digits') : null : null,
                 )),
                 if (_phoneCtrs.length > 1)
                   IconButton(
@@ -151,12 +152,12 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
             const SizedBox(height: 24),
             Row(children: [
-              _section('Addresses'),
+              _section(AppStrings.tx(context, 'Addresses')),
               const Spacer(),
               TextButton.icon(
                 onPressed: () => setState(() => _addrForms.add(_AddrForm())),
                 icon: const Icon(Icons.add_location, size: 18),
-                label: const Text('Add'),
+                label: Text(AppStrings.tx(context, 'Add')),
               ),
             ]),
             const SizedBox(height: 8),
@@ -171,15 +172,15 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 child: Column(children: [
                   Icon(Icons.location_off, color: Colors.grey.shade400, size: 32),
                   const SizedBox(height: 8),
-                  Text('No addresses added', style: TextStyle(color: Colors.grey.shade500)),
+                  Text(AppStrings.tx(context, 'No addresses added'), style: TextStyle(color: Colors.grey.shade500)),
                 ]),
               ),
             ...List.generate(_addrForms.length, (i) => _addrCard(i)),
 
             const SizedBox(height: 24),
-            _section('Notes (optional)'),
+            _section(AppStrings.tx(context, 'Notes (optional)')),
             const SizedBox(height: 12),
-            _field(_notesCtrl, 'Notes', 'Additional info...', Icons.note, maxLines: 3),
+            _field(_notesCtrl, AppStrings.tx(context, 'Notes'), AppStrings.tx(context, 'Additional info...'), Icons.note, maxLines: 3),
 
             const SizedBox(height: 32),
             SizedBox(
@@ -193,7 +194,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 ),
                 child: _isSaving
                     ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
-                    : Text(_isEdit ? 'Update Customer' : 'Save Customer',
+                    : Text(_isEdit ? AppStrings.tx(context, 'Update Customer') : AppStrings.tx(context, 'Save Customer'),
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
@@ -215,47 +216,47 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           Row(children: [
             Icon(Icons.location_on, color: Colors.blue.shade700, size: 20),
             const SizedBox(width: 8),
-            Text('Address ${i + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('${AppStrings.tx(context, "Address")} ${i + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
             const Spacer(),
             IconButton(icon: Icon(Icons.delete, color: Colors.red.shade400, size: 20),
               onPressed: () => setState(() { _addrForms[i].dispose(); _addrForms.removeAt(i); })),
           ]),
           const SizedBox(height: 12),
-          _field(a.label, 'Label', 'Home, Office...', Icons.label),
+          _field(a.label, AppStrings.tx(context, 'Label'), AppStrings.tx(context, 'Home, Office...'), Icons.label),
           const SizedBox(height: 10),
-          _field(a.line1, 'Address Line 1 *', 'Street, shop no.', Icons.location_on,
-              validator: (v) => v!.isEmpty ? 'Required' : null),
+          _field(a.line1, AppStrings.tx(context, 'Address Line 1 *'), AppStrings.tx(context, 'Street, shop no.'), Icons.location_on,
+              validator: (v) => v!.isEmpty ? AppStrings.tx(context, 'Required') : null),
           const SizedBox(height: 10),
-          _field(a.line2, 'Address Line 2', 'Landmark', Icons.location_city),
+          _field(a.line2, AppStrings.tx(context, 'Address Line 2'), AppStrings.tx(context, 'Landmark'), Icons.location_city),
           const SizedBox(height: 10),
           Row(children: [
-            Expanded(child: _field(a.city, 'City *', 'City', Icons.location_city,
-                validator: (v) => v!.isEmpty ? 'Required' : null)),
+            Expanded(child: _field(a.city, AppStrings.tx(context, 'City *'), AppStrings.tx(context, 'City'), Icons.location_city,
+                validator: (v) => v!.isEmpty ? AppStrings.tx(context, 'Required') : null)),
             const SizedBox(width: 10),
-            Expanded(child: _field(a.state, 'State *', 'State', Icons.map,
-                validator: (v) => v!.isEmpty ? 'Required' : null)),
+            Expanded(child: _field(a.state, AppStrings.tx(context, 'State *'), AppStrings.tx(context, 'State'), Icons.map,
+                validator: (v) => v!.isEmpty ? AppStrings.tx(context, 'Required') : null)),
           ]),
           const SizedBox(height: 10),
-          _field(a.pincode, 'Pincode *', '282001', Icons.pin_drop,
+          _field(a.pincode, AppStrings.tx(context, 'Pincode *'), '282001', Icons.pin_drop,
               keyboard: TextInputType.number,
-              validator: (v) => v!.length != 6 ? '6 digits' : null),
+              validator: (v) => v!.length != 6 ? AppStrings.tx(context, '6 digits') : null),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
             initialValue: a.type,
             decoration: InputDecoration(
-              labelText: 'Type', prefixIcon: Icon(Icons.category, color: Colors.blue.shade700),
+              labelText: AppStrings.tx(context, 'Type'), prefixIcon: Icon(Icons.category, color: Colors.blue.shade700),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               filled: true, fillColor: Colors.grey.shade50,
             ),
-            items: const [
-              DropdownMenuItem(value: 'both', child: Text('Billing & Shipping')),
-              DropdownMenuItem(value: 'billing', child: Text('Billing Only')),
-              DropdownMenuItem(value: 'shipping', child: Text('Shipping Only')),
+            items: [
+              DropdownMenuItem(value: 'both', child: Text(AppStrings.tx(context, 'Billing & Shipping'))),
+              DropdownMenuItem(value: 'billing', child: Text(AppStrings.tx(context, 'Billing Only'))),
+              DropdownMenuItem(value: 'shipping', child: Text(AppStrings.tx(context, 'Shipping Only'))),
             ],
             onChanged: (v) => setState(() => a.type = v!),
           ),
           SwitchListTile(
-            title: const Text('Default Address', style: TextStyle(fontSize: 14)),
+            title: Text(AppStrings.tx(context, 'Default Address'), style: const TextStyle(fontSize: 14)),
             value: a.isDefault, onChanged: (v) => setState(() => a.isDefault = v),
             contentPadding: EdgeInsets.zero,
           ),

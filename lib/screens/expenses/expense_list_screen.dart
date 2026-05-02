@@ -1,6 +1,7 @@
 // lib/screens/expenses/expense_list_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/expense_model.dart';
 import '../../services/expense_service.dart';
 
@@ -31,7 +32,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Expenses'),
+        title: Text(AppStrings.tx(context, 'Expenses')),
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
       ),
       body: Column(children: [
@@ -42,12 +43,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(12)),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Total Expenses', style: TextStyle(color: Colors.red.shade300, fontSize: 12)),
+              Text(AppStrings.tx(context, 'Total Expenses'), style: TextStyle(color: Colors.red.shade300, fontSize: 12)),
               Text('₹${totalAll.toStringAsFixed(0)}',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red.shade700)),
             ]),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text('Today', style: TextStyle(color: Colors.red.shade300, fontSize: 12)),
+              Text(AppStrings.tx(context, 'Today'), style: TextStyle(color: Colors.red.shade300, fontSize: 12)),
               Text('₹${_svc.getTodayExpenses().toStringAsFixed(0)}',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red.shade700)),
             ]),
@@ -75,7 +76,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Icon(Icons.receipt_outlined, size: 80, color: Colors.grey.shade300),
                   const SizedBox(height: 16),
-                  Text('No expenses recorded', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade400)),
+                  Text(AppStrings.tx(context, 'No expenses recorded'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade400)),
                 ]))
               : ListView.builder(
                   padding: const EdgeInsets.all(12),
@@ -102,14 +103,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         ]),
                         onLongPress: () {
                           showDialog(context: context, builder: (ctx) => AlertDialog(
-                            title: const Text('Delete Expense?'),
+                            title: Text(AppStrings.tx(context, 'Delete Expense?')),
                             actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                              TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppStrings.tx(context, 'Cancel'))),
                               TextButton(onPressed: () {
                                 _svc.deleteExpense(e.id!);
                                 Navigator.pop(ctx);
                                 _load();
-                              }, child: Text('Delete', style: TextStyle(color: Colors.red.shade700))),
+                              }, child: Text(AppStrings.tx(context, 'Delete'), style: TextStyle(color: Colors.red.shade700))),
                             ],
                           ));
                         },
@@ -122,7 +123,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddExpense(),
         backgroundColor: Colors.red.shade700, foregroundColor: Colors.white,
-        icon: const Icon(Icons.add), label: const Text('Add Expense'),
+        icon: const Icon(Icons.add), label: Text(AppStrings.tx(context, 'Add Expense')),
       ),
     );
   }
@@ -142,17 +143,17 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       builder: (ctx) => StatefulBuilder(builder: (ctx, setBS) => Padding(
         padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Text('Add Expense', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(AppStrings.tx(context, 'Add Expense'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           TextField(controller: descCtrl, decoration: InputDecoration(
-            labelText: 'Description *', hintText: 'e.g. Electricity bill',
+            labelText: AppStrings.tx(context, 'Description *'), hintText: AppStrings.tx(context, 'e.g. Electricity bill'),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             filled: true, fillColor: Colors.grey.shade50,
           )),
           const SizedBox(height: 12),
           TextField(controller: amtCtrl, keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              labelText: 'Amount *', hintText: '0', prefixText: '₹ ',
+              labelText: AppStrings.tx(context, 'Amount *'), hintText: '0', prefixText: '₹ ',
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               filled: true, fillColor: Colors.grey.shade50,
             ),
@@ -161,7 +162,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           Row(children: [
             Expanded(child: DropdownButtonFormField<String>(
               initialValue: cat,
-              decoration: InputDecoration(labelText: 'Category',
+              decoration: InputDecoration(labelText: AppStrings.tx(context, 'Category'),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true, fillColor: Colors.grey.shade50),
               items: cats.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
@@ -170,13 +171,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             const SizedBox(width: 12),
             Expanded(child: DropdownButtonFormField<String>(
               initialValue: method,
-              decoration: InputDecoration(labelText: 'Method',
+              decoration: InputDecoration(labelText: AppStrings.tx(context, 'Method'),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true, fillColor: Colors.grey.shade50),
-              items: const [
-                DropdownMenuItem(value: 'cash', child: Text('Cash')),
+              items: [
+                DropdownMenuItem(value: 'cash', child: Text(AppStrings.tx(context, 'Cash'))),
                 DropdownMenuItem(value: 'upi', child: Text('UPI')),
-                DropdownMenuItem(value: 'bank_transfer', child: Text('Bank')),
+                DropdownMenuItem(value: 'bank_transfer', child: Text(AppStrings.tx(context, 'Bank'))),
               ],
               onChanged: (v) => setBS(() => method = v!),
             )),
@@ -200,7 +201,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               backgroundColor: Colors.red.shade700, foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: const Text('Save Expense', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(AppStrings.tx(context, 'Save Expense'), style: const TextStyle(fontWeight: FontWeight.bold)),
           )),
         ]),
       )),

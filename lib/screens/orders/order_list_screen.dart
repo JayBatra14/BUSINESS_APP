@@ -1,6 +1,7 @@
 // lib/screens/orders/order_list_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/order_model.dart';
 import '../../services/order_service.dart';
 import 'create_order_screen.dart';
@@ -39,7 +40,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Orders'),
+        title: Text(AppStrings.tx(context, 'Orders')),
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
       ),
@@ -54,7 +55,11 @@ class _OrderListScreenState extends State<OrderListScreen> {
                 .map((s) => Padding(
               padding: const EdgeInsets.only(right: 8),
               child: ChoiceChip(
-                label: Text(s == 'All' ? 'All' : s[0].toUpperCase() + s.substring(1)),
+                label: Text(
+                  s == 'All'
+                      ? AppStrings.tx(context, 'All')
+                      : AppStrings.tx(context, s),
+                ),
                 selected: _statusFilter == s,
                 selectedColor: _chipColor(s),
                 onSelected: (_) => setState(() { _statusFilter = s; _load(); }),
@@ -70,9 +75,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
             color: Colors.blue.shade50, borderRadius: BorderRadius.circular(10),
           ),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _miniStat('Today', '₹${_svc.getTodaySales().toStringAsFixed(0)}'),
-            _miniStat('Orders', '${_orders.length}'),
-            _miniStat('Revenue', '₹${_svc.totalRevenue.toStringAsFixed(0)}'),
+            _miniStat(AppStrings.tx(context, 'Today'), '₹${_svc.getTodaySales().toStringAsFixed(0)}'),
+            _miniStat(AppStrings.tx(context, 'Orders'), '${_orders.length}'),
+            _miniStat(AppStrings.tx(context, 'Revenue'), '₹${_svc.totalRevenue.toStringAsFixed(0)}'),
           ]),
         ),
         const SizedBox(height: 8),
@@ -92,7 +97,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
           _load();
         },
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
-        icon: const Icon(Icons.add_shopping_cart), label: const Text('New Sale'),
+        icon: const Icon(Icons.add_shopping_cart), label: Text(AppStrings.tx(context, 'New Sale')),
       ),
     );
   }
@@ -120,7 +125,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(o.orderNumber, style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(o.customerName ?? 'Walk-in',
+                Text(o.customerName ?? AppStrings.tx(context, 'Walk-in'),
                     style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
               ])),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -147,7 +152,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
   Widget _statusBadge(String s) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
     decoration: BoxDecoration(color: _statusClr(s).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
-    child: Text(s[0].toUpperCase() + s.substring(1),
+    child: Text(AppStrings.tx(context, s),
         style: TextStyle(fontSize: 10, color: _statusClr(s), fontWeight: FontWeight.w600)),
   );
 
@@ -157,7 +162,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
       color: s == 'paid' ? Colors.green.shade50 : s == 'partial' ? Colors.orange.shade50 : Colors.red.shade50,
       borderRadius: BorderRadius.circular(6),
     ),
-    child: Text(s.toUpperCase(),
+    child: Text(AppStrings.tx(context, s).toUpperCase(),
         style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600,
             color: s == 'paid' ? Colors.green.shade700 : s == 'partial' ? Colors.orange.shade700 : Colors.red.shade700)),
   );
@@ -199,7 +204,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Icon(Icons.receipt_long_outlined, size: 80, color: Colors.grey.shade300),
       const SizedBox(height: 16),
-      Text('No orders yet', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade400)),
+      Text(AppStrings.tx(context, 'No orders yet'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade400)),
     ]),
   );
 }

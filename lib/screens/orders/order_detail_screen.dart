@@ -1,6 +1,7 @@
 // lib/screens/orders/order_detail_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../models/order_model.dart';
 import '../../services/order_service.dart';
 import 'invoice_preview_screen.dart';
@@ -28,7 +29,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (_order == null) {
-      return Scaffold(appBar: AppBar(title: const Text('Order')), body: const Center(child: Text('Not found')));
+      return Scaffold(appBar: AppBar(title: Text(AppStrings.tx(context, 'Order'))), body: Center(child: Text(AppStrings.tx(context, 'Not found'))));
     }
     final o = _order!;
 
@@ -57,11 +58,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               }
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'confirmed', child: Text('Mark Confirmed')),
-              const PopupMenuItem(value: 'shipped', child: Text('Mark Shipped')),
-              const PopupMenuItem(value: 'delivered', child: Text('Mark Delivered')),
-              const PopupMenuItem(value: 'cancelled', child: Text('Cancel Order')),
-              const PopupMenuItem(value: 'delete', child: Text('Delete Order')),
+              PopupMenuItem(value: 'confirmed', child: Text(AppStrings.tx(context, 'Mark Confirmed'))),
+              PopupMenuItem(value: 'shipped', child: Text(AppStrings.tx(context, 'Mark Shipped'))),
+              PopupMenuItem(value: 'delivered', child: Text(AppStrings.tx(context, 'Mark Delivered'))),
+              PopupMenuItem(value: 'cancelled', child: Text(AppStrings.tx(context, 'Cancel Order'))),
+              PopupMenuItem(value: 'delete', child: Text(AppStrings.tx(context, 'Delete Order'))),
             ],
           ),
         ],
@@ -88,17 +89,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
           const SizedBox(height: 20),
           // Customer info
-          _sec('Customer'),
+          _sec(AppStrings.tx(context, 'Customer')),
           const SizedBox(height: 8),
           Card(child: ListTile(
             leading: Icon(Icons.person, color: Colors.blue.shade700),
-            title: Text(o.customerName ?? 'Walk-in'),
+            title: Text(o.customerName ?? AppStrings.tx(context, 'Walk-in')),
           )),
 
           // Billing address
           if (o.billingAddress != null) ...[
             const SizedBox(height: 12),
-            _sec('Billing Address'),
+            _sec(AppStrings.tx(context, 'Billing Address')),
             const SizedBox(height: 8),
             Card(child: ListTile(
               leading: Icon(Icons.location_on, color: Colors.blue.shade700),
@@ -110,7 +111,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           // Shipping address
           if (o.shippingAddress != null) ...[
             const SizedBox(height: 12),
-            _sec('Delivery Address'),
+            _sec(AppStrings.tx(context, 'Delivery Address')),
             const SizedBox(height: 8),
             Card(child: ListTile(
               leading: Icon(Icons.local_shipping, color: Colors.blue.shade700),
@@ -131,7 +132,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   Text('${item.quantity} ${item.unit} × ₹${item.unitPrice.toStringAsFixed(0)}',
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
                   if (item.discount > 0)
-                    Text('Discount: ${item.discount}%', style: TextStyle(color: Colors.red.shade700, fontSize: 12)),
+                    Text('${AppStrings.tx(context, "Discount")}: ${item.discount}%', style: TextStyle(color: Colors.red.shade700, fontSize: 12)),
                 ])),
                 Text('₹${item.total.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ]),
@@ -144,14 +145,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
             child: Column(children: [
-              _row('Subtotal', o.subtotal),
-              if (o.totalDiscount > 0) _row('Discount', -o.totalDiscount, isRed: true),
-              if (o.totalTax > 0) _row('Tax (GST)', o.totalTax),
+              _row(AppStrings.tx(context, 'Subtotal'), o.subtotal),
+              if (o.totalDiscount > 0) _row(AppStrings.tx(context, 'Discount'), -o.totalDiscount, isRed: true),
+              if (o.totalTax > 0) _row(AppStrings.tx(context, 'Tax (GST)'), o.totalTax),
               const Divider(),
-              _row('Grand Total', o.grandTotal, isBold: true),
+              _row(AppStrings.tx(context, 'Grand Total'), o.grandTotal, isBold: true),
               const Divider(),
-              _row('Paid', o.amountPaid, isGreen: true),
-              _row('Balance Due', o.balanceDue, isBold: true, isRed: o.balanceDue > 0),
+              _row(AppStrings.tx(context, 'Paid'), o.amountPaid, isGreen: true),
+              _row(AppStrings.tx(context, 'Balance Due'), o.balanceDue, isBold: true, isRed: o.balanceDue > 0),
             ]),
           ),
 
@@ -163,7 +164,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               child: OutlinedButton.icon(
                 onPressed: () => _showPaymentDialog(o),
                 icon: const Icon(Icons.payment),
-                label: const Text('Record Payment'),
+                label: Text(AppStrings.tx(context, 'Record Payment')),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.green.shade700,
                   side: BorderSide(color: Colors.green.shade700),
@@ -175,7 +176,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
           if (o.notes != null && o.notes!.isNotEmpty) ...[
             const SizedBox(height: 20),
-            _sec('Notes'),
+            _sec(AppStrings.tx(context, 'Notes')),
             const SizedBox(height: 8),
             Card(child: Padding(padding: const EdgeInsets.all(16), child: Text(o.notes!))),
           ],
@@ -191,25 +192,25 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     String method = 'cash';
     showDialog(context: context, builder: (ctx) => StatefulBuilder(
       builder: (ctx, setD) => AlertDialog(
-        title: const Text('Record Payment'),
+        title: Text(AppStrings.tx(context, 'Record Payment')),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
           TextField(controller: ctrl, keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Amount', prefixText: '₹ ')),
+            decoration: InputDecoration(labelText: AppStrings.tx(context, 'Amount'), prefixText: '₹ ')),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             initialValue: method,
-            decoration: const InputDecoration(labelText: 'Method'),
-            items: const [
-              DropdownMenuItem(value: 'cash', child: Text('Cash')),
+            decoration: InputDecoration(labelText: AppStrings.tx(context, 'Method')),
+            items: [
+              DropdownMenuItem(value: 'cash', child: Text(AppStrings.tx(context, 'Cash'))),
               DropdownMenuItem(value: 'upi', child: Text('UPI')),
-              DropdownMenuItem(value: 'card', child: Text('Card')),
-              DropdownMenuItem(value: 'bank_transfer', child: Text('Bank')),
+              DropdownMenuItem(value: 'card', child: Text(AppStrings.tx(context, 'Card'))),
+              DropdownMenuItem(value: 'bank_transfer', child: Text(AppStrings.tx(context, 'Bank'))),
             ],
             onChanged: (v) => setD(() => method = v!),
           ),
         ]),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppStrings.tx(context, 'Cancel'))),
           ElevatedButton(
             onPressed: () async {
               final amt = double.tryParse(ctrl.text) ?? 0;
@@ -219,7 +220,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 _load();
               }
             },
-            child: const Text('Save'),
+            child: Text(AppStrings.tx(context, 'Save')),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 // lib/screens/more/ledger_screen.dart
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_strings.dart';
 import '../../services/customer_service.dart';
 import '../../models/customer_model.dart';
 
@@ -26,7 +27,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Ledger'),
+        title: Text(AppStrings.tx(context, 'Ledger')),
         backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white,
       ),
       body: Column(children: [
@@ -34,17 +35,17 @@ class _LedgerScreenState extends State<LedgerScreen> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: Row(children: [
-            Expanded(child: _summaryCard('You Will Get', totalReceivable, Colors.green)),
+            Expanded(child: _summaryCard(AppStrings.tx(context, 'You Will Get'), totalReceivable, Colors.green)),
             const SizedBox(width: 16),
-            Expanded(child: _summaryCard('You Will Give', totalPayable, Colors.red)),
+            Expanded(child: _summaryCard(AppStrings.tx(context, 'You Will Give'), totalPayable, Colors.red)),
           ]),
         ),
         
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Text('Outstanding Balances', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
+            child: Text(AppStrings.tx(context, 'Outstanding Balances'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
           ),
         ),
         
@@ -77,7 +78,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(Icons.check_circle_outline, size: 60, color: Colors.grey.shade300),
         const SizedBox(height: 12),
-        Text('All accounts are clear!', style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
+        Text(AppStrings.tx(context, 'All accounts are clear!'), style: TextStyle(fontSize: 16, color: Colors.grey.shade500)),
       ]));
     }
 
@@ -88,7 +89,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
         final c = customers[i];
         final isReceivable = c.balance > 0;
         final color = isReceivable ? Colors.green : Colors.red;
-        final labelText = isReceivable ? 'You will get' : 'You will give';
+        final labelText = isReceivable ? AppStrings.tx(context, 'You will get') : AppStrings.tx(context, 'You will give');
         
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
