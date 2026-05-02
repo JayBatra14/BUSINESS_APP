@@ -9,6 +9,7 @@ import '../business_setup_screen.dart';
 import '../../services/backup_service.dart';
 import '../../services/csv_export_service.dart';
 import 'ledger_screen.dart';
+import 'reports_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   final String businessId;
@@ -54,6 +55,9 @@ class MoreScreen extends StatelessWidget {
 
           _menuItem(context, AppStrings.tx(context, 'Expenses'), Icons.money_off, Colors.red, () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpenseListScreen()));
+          }),
+          _menuItem(context, AppStrings.tx(context, 'Reports & Analytics'), Icons.analytics, Colors.indigo, () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportsScreen()));
           }),
           _menuItem(context, AppStrings.tx(context, 'Ledger'), Icons.book, Colors.purple, () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const LedgerScreen()));
