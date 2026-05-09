@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../models/product_model.dart';
 import '../../services/product_service.dart';
 import 'add_product_screen.dart';
@@ -84,7 +85,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
         ],
       ),
-      body: Column(children: [
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('products').listenable(),
+        builder: (context, box, _) {
+          _all = _svc.getAllProducts();
+          _applyFilter();
+          return Column(children: [
         // Category chips
         if (cats.length > 1)
           SizedBox(
@@ -129,7 +135,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   itemBuilder: (_, i) => _productCard(_filtered[i]),
                 ),
         ),
-      ]),
+          ]);
+        },
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(context, MaterialPageRoute(builder: (_) => const AddProductScreen()));

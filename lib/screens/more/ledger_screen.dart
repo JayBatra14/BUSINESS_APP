@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../services/customer_service.dart';
 import '../../services/csv_export_service.dart';
 import '../../models/customer_model.dart';
@@ -18,13 +19,6 @@ class _LedgerScreenState extends State<LedgerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allCustomers = _custSvc.getAllCustomers();
-    final withBalance = allCustomers.where((c) => c.balance != 0).toList()
-      ..sort((a, b) => b.balance.abs().compareTo(a.balance.abs())); // Sort by largest balance
-    
-    final totalReceivable = withBalance.where((c) => c.balance > 0).fold(0.0, (s, c) => s + c.balance);
-    final totalPayable = withBalance.where((c) => c.balance < 0).fold(0.0, (s, c) => s + c.balance.abs());
-
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -40,7 +34,17 @@ class _LedgerScreenState extends State<LedgerScreen> {
           ),
         ],
       ),
-      body: Column(children: [
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('customers').listenable(),
+        builder: (context, box, _) {
+          final allCustomers = _custSvc.getAllCustomers();
+          final withBalance = allCustomers.where((c) => c.balance != 0).toList()
+            ..sort((a, b) => b.balance.abs().compareTo(a.balance.abs())); // Sort by largest balance
+          
+          final totalReceivable = withBalance.where((c) => c.balance > 0).fold(0.0, (s, c) => s + c.balance);
+          final totalPayable = withBalance.where((c) => c.balance < 0).fold(0.0, (s, c) => s + c.balance.abs());
+
+          return Column(children: [
         // Summary cards
         Padding(
           padding: const EdgeInsets.all(16),
@@ -62,7 +66,9 @@ class _LedgerScreenState extends State<LedgerScreen> {
         Expanded(
           child: _buildList(withBalance),
         ),
-      ]),
+      ]);
+        },
+      ),
     );
   }
 

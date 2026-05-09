@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../models/customer_model.dart';
 import '../../services/customer_service.dart';
 import 'add_customer_screen.dart';
@@ -85,7 +86,17 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
           ),
         ],
       ),
-      body: _filtered.isEmpty
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('customers').listenable(),
+        builder: (context, box, _) {
+          if (!_isSearching) {
+            _customers = _customerService.getAllCustomers();
+            _filtered = _customers;
+          } else {
+            _customers = _customerService.getAllCustomers();
+            _filtered = _customerService.searchCustomers(_searchController.text);
+          }
+          return _filtered.isEmpty
           ? _buildEmptyState()
           : ListView.builder(
               padding: const EdgeInsets.all(12),
@@ -94,7 +105,9 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                 final c = _filtered[index];
                 return _buildCustomerCard(c);
               },
-            ),
+            );
+        },
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(

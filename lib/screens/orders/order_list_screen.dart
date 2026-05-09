@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../l10n/app_strings.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../models/order_model.dart';
 import '../../services/order_service.dart';
 import '../../services/csv_export_service.dart';
@@ -78,7 +79,15 @@ class _OrderListScreenState extends State<OrderListScreen> {
           ),
         ],
       ),
-      body: Column(children: [
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('orders').listenable(),
+        builder: (context, box, _) {
+          if (_statusFilter == 'All') {
+            _orders = _svc.getAllOrders();
+          } else {
+            _orders = _svc.getOrdersByStatus(_statusFilter);
+          }
+          return Column(children: [
         // Status filter chips
         SizedBox(
           height: 50,
@@ -124,7 +133,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
                   itemBuilder: (_, i) => _orderCard(_orders[i]),
                 ),
         ),
-      ]),
+          ]);
+        },
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateOrderScreen()));
