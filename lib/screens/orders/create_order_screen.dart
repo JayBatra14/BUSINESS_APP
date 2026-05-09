@@ -10,7 +10,6 @@ import '../../services/order_service.dart';
 import '../../services/customer_service.dart';
 import '../../services/product_service.dart';
 import '../../widgets/barcode_scanner_screen.dart';
-import '../customers/add_customer_screen.dart';
 
 class CreateOrderScreen extends StatefulWidget {
   const CreateOrderScreen({super.key});
@@ -81,26 +80,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   onChanged: (v) => setBS(() => q = v),
                 ),
                 const SizedBox(height: 12),
-                // Walk-in → capture details on Add Customer, then attach to order
+                // Walk-in option
                 ListTile(
                   leading: CircleAvatar(backgroundColor: Colors.grey.shade200, child: const Icon(Icons.person_outline)),
                   title: Text(AppStrings.tx(context, 'Walk-in Customer')),
-                  onTap: () async {
+                  onTap: () {
+                    setState(() { _selectedCustomer = null; _billingAddr = null; _shippingAddr = null; });
                     Navigator.pop(ctx);
-                    if (!mounted) return;
-                    final newId = await Navigator.push<String?>(
-                      context,
-                      MaterialPageRoute(builder: (_) => const AddCustomerScreen()),
-                    );
-                    if (!mounted || newId == null) return;
-                    final fresh = _custSvc.getCustomer(newId);
-                    if (fresh != null) {
-                      setState(() {
-                        _selectedCustomer = fresh;
-                        _billingAddr = fresh.defaultBillingAddress;
-                        _shippingAddr = fresh.defaultShippingAddress;
-                      });
-                    }
                   },
                 ),
                 const Divider(),
