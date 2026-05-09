@@ -47,7 +47,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       _skuCtrl.text = p.sku ?? '';
       _priceCtrl.text = p.sellingPrice.toString();
       _costCtrl.text = (p.costPrice ?? 0).toString();
-      _stockCtrl.text = p.stockQty.toString();
+      _stockCtrl.text = p.stockQty == p.stockQty.truncateToDouble() ? p.stockQty.toInt().toString() : p.stockQty.toString();
       _taxCtrl.text = p.taxPercent.toString();
       _hsnCtrl.text = p.hsnCode ?? '';
       _barcodeCtrl.text = p.barcode ?? '';

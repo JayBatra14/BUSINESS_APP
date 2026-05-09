@@ -73,7 +73,7 @@ class ProductService {
     final data = _box.get(id);
     if (data == null) return;
     final map = Map<String, dynamic>.from(data);
-    map['stockQty'] = newQty;
+    map['stockQty'] = double.parse(newQty.toStringAsFixed(3));
     await _box.put(id, map);
   }
 

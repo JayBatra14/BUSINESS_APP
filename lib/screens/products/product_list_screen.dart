@@ -159,7 +159,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           Text('₹${p.sellingPrice.toStringAsFixed(0)} • ${p.category}',
               style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
           Row(children: [
-            Text('${AppStrings.tx(context, "Stock")}: ${p.stockQty.toStringAsFixed(0)} ${p.unit}',
+            Text('${AppStrings.tx(context, "Stock")}: ${p.stockQty == p.stockQty.truncateToDouble() ? p.stockQty.toInt() : p.stockQty} ${p.unit}',
                 style: TextStyle(
                   color: p.isLowStock ? Colors.red.shade700 : Colors.grey.shade500,
                   fontSize: 12, fontWeight: p.isLowStock ? FontWeight.bold : FontWeight.normal,

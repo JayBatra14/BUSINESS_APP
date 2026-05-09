@@ -197,7 +197,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                 child: Icon(Icons.inventory_2, color: Colors.blue.shade700, size: 20),
                               ),
                               title: Text(p.name),
-                              subtitle: Text('₹${p.sellingPrice.toStringAsFixed(0)} • ${AppStrings.tx(context, "Stock")}: ${p.stockQty.toStringAsFixed(0)}'),
+                              subtitle: Text('₹${p.sellingPrice.toStringAsFixed(0)} • ${AppStrings.tx(context, "Stock")}: ${p.stockQty == p.stockQty.truncateToDouble() ? p.stockQty.toInt() : p.stockQty}'),
                               trailing: inCart
                                   ? Icon(Icons.check_circle, color: Colors.green.shade700)
                                   : Icon(Icons.add_circle_outline, color: Colors.blue.shade700),
@@ -448,7 +448,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           Row(children: [
             // Qty
             SizedBox(width: 80, child: TextFormField(
-              initialValue: item.qty.toString(),
+              initialValue: item.qty == item.qty.truncateToDouble() ? item.qty.toInt().toString() : item.qty.toString(),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: AppStrings.tx(context, 'Qty'), isDense: true, border: const OutlineInputBorder()),
               onChanged: (v) => setState(() => item.qty = double.tryParse(v) ?? 1),
